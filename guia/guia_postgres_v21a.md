@@ -2,6 +2,8 @@
 
 Revisión 2021
 
+<img src="../imagenes/postgresql-logo.png" alt="cv" width="250"/><br>
+
 ## Indice
 
 [Tema 01: Instalación y configuración de PostgreSQL](#Toc444422180)
@@ -17,7 +19,7 @@ Revisión 2021
 2.3. [Parámetros](#Toc4684830)
 3. [Actualizaciones](#Toc4684831)
 
-[Tema 02: Estructura y almacenamiento en PostgreSQL 10](#Toc4684832)
+[Tema 02: Estructura y almacenamiento en PostgreSQL](#Toc4684832)
 
 1. [Arquitectura básica](#Toc4684833)
 2. [Subsistemas PostgreSQL](#Toc4684834)
@@ -29,29 +31,31 @@ Revisión 2021
 3.5. [Tablespaces](#Toc4684840)
 3.6. [Tablas](#Toc4684841)
 
-[Tema 03: Técnicas avanzadas en PostgreSQL](#Toc4684842)
+[Tema 03: Funcionalidades en PostgreSQL](#Toc4684842)
 
 1. [Funciones](#Toc4684843)
 1.1. [Funciones anónimas](#Toc4684844)
 1.2. [Funciones PostgreSQL](#Toc4684845)
-2. [Lenguaje PL/pgSQL](#Toc4684846)
-2.1. [Variables y bloques funcionales](#Toc4684847)
-2.2. [Estructuras condicionales](#Toc4684848)
-2.3. [Estructuras iterativas](#Toc4684849)
-2.4. [Gestión de excepciones](#Toc4684850)
-2.5. [SQL Dinámico](#Toc4684851)
-3. [Triggers](#Toc4684852)
-3.1. [Creación de triggers e integración con funciones](#Toc4684853)
-4. [Indices](#Toc4684854)
-4.1. [Uso de índices](#Toc4684855)
-4.2. [Tipos de índices](#Toc4684856)
-4.3. [Estrategias de indexado](#Toc4684857)
-5. [Vistas](#Toc4684858)
-6. [Transacciones](#Toc4684859)
-6.1. [Propiedades ACID](#Toc4684860)
-6.2. [Log de transacciones](#Toc4684861)
-6.3. [Checkpoints y Savepoints](#Toc4684862)
-6.4. [Concurrencia y niveles de aislamiento](#Toc4684863)
+2. [Procedimientos](#Toc4684843)
+3. [Constraints](#Toc4684843)
+4. [Lenguaje PL/pgSQL](#Toc4684846)
+4.1. [Variables y bloques funcionales](#Toc4684847)
+4.2. [Estructuras condicionales](#Toc4684848)
+4.3. [Estructuras iterativas](#Toc4684849)
+4.4. [Gestión de excepciones](#Toc4684850)
+4.5. [SQL Dinámico](#Toc4684851)
+5. [Triggers](#Toc4684852)
+5.1. [Creación de triggers e integración con funciones](#Toc4684853)
+6. [Indices](#Toc4684854)
+6.1. [Uso de índices](#Toc4684855)
+6.2. [Tipos de índices](#Toc4684856)
+6.3. [Estrategias de indexado](#Toc4684857)
+7. [Vistas](#Toc4684858)
+8. [Transacciones](#Toc4684859)
+8.1. [Propiedades ACID](#Toc4684860)
+8.2. [Log de transacciones](#Toc4684861)
+8.3. [Checkpoints y Savepoints](#Toc4684862)
+8.4. [Concurrencia y niveles de aislamiento](#Toc4684863)
 
 [Tema 04: Seguridad en PostgreSQL](#Toc4684864)
 
@@ -119,9 +123,9 @@ Los requisitos mínimos que deberíamos tener para instalarlo serían
 
 a)  1 procesador/core
 
-b)  1GB de RAM
+b)  2GB de RAM
 
-c)  8GB de espacio en disco.
+c)  16GB de espacio en disco.
 
 Estos requisitos servirían para probar el software de manera básica pero
 no nos van a permitir explotar al máximo todas las características y
@@ -129,9 +133,9 @@ opciones de PostgreSQL. Para ello recomendamos disponer de:
 
 d)  2+ procesadores/cores
 
-e)  2GB-4GB+ de RAM
+e)  4GB+ de RAM
 
-f)  16GB+ de espacio en disco
+f)  32GB+ de espacio en disco
 
 Software
 
@@ -163,7 +167,6 @@ Para RedHat/CentOS debemos tener instalado el repositorio EPEL, ya que
 los paquetes de PostgreSQL tienen ciertas dependencias con paquetes
 de este repositorio. Recomendamos RedHat 7.4+ o CentOS 7.4+
 
-E01.01: Instalación de PostgreSQL en RedHat Linux
 
 Para instalar EPEL, simplemente ejecutar el comando:
 
@@ -749,7 +752,7 @@ tablas:
 
 <https://www.postgresql.org/docs/current/static/datatype.html>
 
-## Tema 03: Técnicas avanzadas en PostgreSQL
+## Tema 03: Objetos en PostgreSQL
 
 En este capítulo estudiaremos distintos objetos que tienen una
 importancia relevante a la hora de administrar una instancia de
@@ -1898,8 +1901,7 @@ d)  Vistas materializadas, que son tablas cuyos datos son refrescados
     materializables se usan como técnicas de cacheo.
 
 Las vistas simples son especialmente útiles para "almacenar" datos
-estáticos, por ejemplo, resúmenes contables de años pasados y las
-materializadas son especialmente útiles para cachear datos.
+estáticos, por ejemplo, resúmenes contables de años pasados y son especialmente útiles para cachear datos. Se utilizan mucho en entornos OLAP.
 
 ### Transacciones
 
@@ -2182,6 +2184,8 @@ simplemente cambiamos la clave de cada usuario y después las líneas
 pertinentes en el fichero pg_hba.conf sustituyendo md5 por
 scram-sha-256
 
+Más sobre scram-sha-256: <https://en.wikipedia.org/wiki/Salted_Challenge_Response_Authentication_Mechanism>
+
 #### Túneles SSH
 
 Otra manera de "securizar" conexiones entre clientes y el servidor es
@@ -2194,7 +2198,7 @@ postgres), tanto para el servicio SSH como para la instancia PostgreSQL.
 Acto seguido establecemos un túnel SSH utilizando el comando:
 
 ```bash
-ssh -L 63333:localhost:5432 dnieto@raspberrypi3
+ssh -L 63333:localhost:5432 dnieto@raspi4
 ```
 
 Con el parámetro -L especificamos el puerto de nuestro lado del túnel,
