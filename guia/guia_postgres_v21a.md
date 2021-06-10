@@ -6,18 +6,16 @@ Revisión 2021
 
 [Tema 01: Instalación y configuración de PostgreSQL](#Toc444422180)
 
-1. [Introducción a Windows y Linux](#Toc4684820)
-2. [Instalación](#Toc4684821)
-2.1. [Requerimientos](#Toc4684822)
-2.2. [Virtualización e instalación de VirtualBox](#Toc4684823)
-2.3. [Instalación en Windows](#Toc4684824)
-2.4. [Instalación en RedHat/CentOS](#Toc4684825)
-2.5. [Instalación en Debian/Ubuntu 7](#Toc4684826)
-3. [Configuración](#Toc444422183)
-3.1. [Arranque Automático](#Toc4684828)
-3.2. [Codificación de caracteres e idiomas](#Toc4684829)
-3.3. [Parámetros](#Toc4684830)
-4. [Actualizaciones](#Toc4684831)
+1. [Instalación](#Toc4684821)
+1.1. [Requerimientos](#Toc4684822)
+1.2. [Instalación en Windows](#Toc4684824)
+1.3. [Instalación en RedHat/CentOS](#Toc4684825)
+1.4. [Instalación en Debian/Ubuntu 7](#Toc4684826)
+2. [Configuración](#Toc444422183)
+2.1. [Arranque Automático](#Toc4684828)
+2.2. [Codificación de caracteres e idiomas](#Toc4684829)
+2.3. [Parámetros](#Toc4684830)
+3. [Actualizaciones](#Toc4684831)
 
 [Tema 02: Estructura y almacenamiento en PostgreSQL 10](#Toc4684832)
 
@@ -42,7 +40,7 @@ Revisión 2021
 2.3. [Estructuras iterativas](#Toc4684849)
 2.4. [Gestión de excepciones](#Toc4684850)
 2.5. [SQL Dinámico](#Toc4684851)
-3. [Triggers 26](#Toc4684852)
+3. [Triggers](#Toc4684852)
 3.1. [Creación de triggers e integración con funciones](#Toc4684853)
 4. [Indices](#Toc4684854)
 4.1. [Uso de índices](#Toc4684855)
@@ -106,34 +104,9 @@ Revisión 2021
 
 ## Tema 01: Instalación y configuración de PostgreSQL
 
-### Introducción a Windows y Linux
+### Instalación
 
-El sistema operativo Windows es el más usado del mundo en el sector PC.
-Desde su primera encarnación llamada Windows en 1985, ha ido recibiendo
-actualizaciones, modificaciones y versiones muy diferentes para
-aprovechar mejor el potencial de los PCs y los nuevos componentes que
-van saliendo al mercado. La versión más reciente es Windows 10 y su
-principal características es la búsqueda de unificación de móviles,
-tablets, portátiles y PCs de escritorio. PostgreSQL tiene soporte para
-Windows, junto con algunas de sus herramientas de gestión como PgAdmin4.
-En la siguiente sección veremos como instalar PostgreSQL bajo Windows.
-
-El sistema operativo UNIX empezó a desarrollarse por universitarios
-estadounidenses en la década de los 70, escrito en C. Desde sus orígenes
-ha sido dotado de una gran versatilidad y facilidad de utilización para
-el usuario, permitiéndole desarrollar y ampliar cómodamente el propio
-sistema. Existen una gan variedad de versiones de UNIX para diferentes
-plataformas y aunque todas ellas mantienen una filosofía común, no son
-exactamente equivalentes. Linux es un UNIX de libre distribución
-desarrollado inicialmente por Linus Torvalds. En la actualidad existen
-varias distribuciones Linux: RedHat o Ubuntu que son las que
-utilizaremos. Algunas de ellas han sido desarrolladas no sólo para
-ordenadores personales basados en procesadores Intel o compatibles, sino
-también para máquinas con procesadores SPARC o PowerPC.
-
-#### Instalación
-
-##### Requerimientos
+#### Requerimientos
 
 Sería necesario disponer de unos requerimientos básicos de hardware,
 software y espacio en disco. PostgreSQL es un SGBD poco pesado y se
@@ -173,33 +146,7 @@ Estos paquetes aglutinan una serie de funcionalidades añadidas que son
 interesantes. Se instalan como software añadido en la versión 9 de
 PostgreSQL pero en la versión 10 ya están integrados en la instalación.
 
-##### Virtualización e instalación de VirtualBox
-
-En Informática, **virtualización** es la creación a través de software
-de una versión virtual de algún recurso tecnológico, como puede ser una
-plataforma de hardware, un sistema operativo, un dispositivo de
-almacenamiento u otros recursos de red.
-
-![](./media/image2.png =100x200)
-
-Un **hipervisor** (en inglés *hypervisor*)
-o **monitor de máquina virtual** es un software que implementa el
-sistema de control de virtualización para utilizar diferentes sistemas
-operativos con un mismo hardware. En la imagen siguiente podemos ver
-como sería la arquitectura básica de una virtualización.
-
-Utilizaremos VirtualBox como monitor de máquina virtual, que nos
-permitirá ejecutar máquinas virtuales Linux bajo nuestro sistema
-operativo Windows.
-
-En cualquier caso vamos a necesitar instalar el hipervisor VirtualBox,
-que se puede descargar desde:
-
-Una vez hayamos descargado el archivo lo ejecutamos haciendo
-doble-click. Procedemos a contestar afirmativamente a todas las
-preguntas y realizar la instalación por defecto.
-
-##### Instalación en Windows
+#### Instalación en Windows
 
 La instalación en Windows se realiza de manera gráfica. Lo primero que
 hay que hacer es bajarse el instalador gráfico de:
@@ -210,7 +157,7 @@ Una vez seleccionada la versión, que en nuestro caso es la 13 para
 Windows x64, procederemos a su instalación en nuestra máquina virtual o
 PC.
 
-##### Instalación en RedHat/CentOS
+#### Instalación en RedHat/CentOS
 
 Para RedHat/CentOS debemos tener instalado el repositorio EPEL, ya que
 los paquetes de PostgreSQL tienen ciertas dependencias con paquetes
@@ -251,7 +198,7 @@ ello ejecutar:
 yum install postgresql13 postgresql13-server
 ```
 
-##### Instalación en Debian/Ubuntu
+#### Instalación en Debian/Ubuntu
 
 Para instalar PostgreSQL es recomendable disponer de Debian 9+ o
 Ubuntu 18.04+. Para ello debemos visitar
@@ -283,7 +230,7 @@ Finalmente instalamos postgreSQL ejecutando:
 sudo apt install postgresql-13 postgresql-client-13
 ```
 
-#### Configuración
+### Configuración
 
 En nuestro caso, los ficheros de configuración que editaremos para
 configurar el comportamiento del SGBD son:
@@ -301,7 +248,7 @@ El segundo se utiliza para controlar los accesos y definir los métodos
 de autenticación. Veremos con más detalle las directivas de este fichero
 en el capítulo de seguridad.
 
-##### Arranque Automático
+#### Arranque Automático
 
 Para configurar el arranque automático del servicio de PostgreSQL
 simplemente tendremos que utilizar systemctl ejecutando:
@@ -342,7 +289,7 @@ Para hacer una parada del servicio simplemente hay que ejecutar:
 sudo systemctl stop postgresql
 ```
 
-##### Codificación de caracteres e idiomas
+#### Codificación de caracteres e idiomas
 
 PostgreSQL permite almacenar texto en una gran variedad de
 codificaciones de caracteres o *encodings*, propias de cada idioma o
@@ -407,7 +354,7 @@ debido a que en Linux hay varios idiomas que sólo soportan un tipo de
 codificación por ejemplo el Koreano sólo soporta EUC sin embargo en
 Windows todos los idiomas soportan la codificación UTF-8.
 
-##### Parámetros
+#### Parámetros
 
 A continuación se detallan los parámetros a configurar en el fichero
 **postgresql.conf**
@@ -505,7 +452,7 @@ consultas o *queries*, utilidades y gestor del almacenamiento. A
 continuación se muestra una figura que describe la arquitectura general
 de PostgreSQL:
 
-![](./media/image3.png)
+<img src="./media/image3.png" alt="cv" width="400"/><br>
 
 Imagen de la arquitectura de PostreSQL
 
@@ -541,7 +488,7 @@ objetos que componen una base de datos. Las bases de datos, roles,
 *tablespaces*, *settings,* o lenguajes plantillas comparten el mismo
 nivel de jerarquía, como se puede apreciar en la imagen siguiente:
 
-![](./media/image4.png)
+<img src="./media/image4.png" alt="cv" width="400"/><br>
 
 #### Bases de datos Template (de sistema)
 
@@ -555,7 +502,7 @@ objetos de bases de datos definidos por los usuarios y son parte del
 
 La siguiente imagen intenta explicar de una forma visual el anterior párrafo:
 
-![](./media/image5.png) 
+<img src="./media/image5.png" alt="cv" width="250"/><br>
 
 Como se puede observar tanto la base de datos postgres como la base de
 datos prueba, comparten la misma estructura y jerarquía de objetos
@@ -620,7 +567,7 @@ versiones nuevas se recomienda utilizar CREATE ROLE.
 
 A continuación detalla la estructura relacional de la entidad Rol:
 
-![](./media/image6.png)
+<img src="./media/image6.png" alt="cv" width="600"/><br>
 
 Diagrama ER de la entidad Rol
 
@@ -670,7 +617,7 @@ atributo NOLOGIN.
 Para comprobar qué atributos se pueden utilizar con el comando CREATE
 ROLE se recomienda visitar:
 
-<https://www.postgresql.org/docs/10/role-attributes.html>
+<https://www.postgresql.org/docs/current/role-attributes.html>
 
 #### Esquemas
 
@@ -689,7 +636,7 @@ proveedores, un esquema podría ser de clientes, con sus tablas,
 procedimientos, índices, triggers ... y otro el de proveedores. La unión
 de ambos esquemas formaría nuestra base de datos.
 
-![](./media/image7.png)
+<img src="./media/image7.png" alt="cv" width="600"/><br>
 
 Esquema PosgreSQL visto como un contenedor de objetos de una base de
 datos
@@ -758,7 +705,7 @@ CREATE TABLESPACE idxspace1 OWNER alumno LOCATION '/DATA/idxspace2';
 
 Para más información consultar:
 
-<https://www.postgresql.org/docs/10/sql-createtablespace.html>
+<https://www.postgresql.org/docs/current/sql-createtablespace.html>
 
 #### Tablas
 
@@ -794,13 +741,13 @@ tabla heredada.
 La sintaxis del comando CREATE TABLE es muy extensa, es por ello que se
 recomienda consultar el manual de PostgreSQL:
 
-<https://www.postgresql.org/docs/10/static/ddl-basics.html>
+<https://www.postgresql.org/docs/current/static/ddl-basics.html>
 
 A su vez también se recomienda consultar los distintos tipos de datos
 existentes en postgreSQL, que se utilizan a la hora de crear o modificar
 tablas:
 
-<https://www.postgresql.org/docs/10/static/datatype.html>
+<https://www.postgresql.org/docs/current/static/datatype.html>
 
 ## Tema 03: Técnicas avanzadas en PostgreSQL
 
@@ -842,16 +789,11 @@ d)  Automatización de tareas comunes.
 La sintaxis para crear una función es como sigue:
 
 ```sql
-
-CREATE OR REPLACE FUNCTION [nombre_función] ( [param1], [param2]...[paramn] ) RETURNS [tipo] AS $$
+CREATE OR REPLACE FUNCTION [nombre_función] ([param1], [param2]...[paramn]) RETURNS [tipo] AS $$
 DECLARE
-
-[bloque de declaraciones]
-
+    [bloque de declaraciones]
 BEGIN
-
-[bloque de código]
-
+    [bloque de código]
 END;
 $$ LANGUAGE SQL;
 ```
@@ -889,7 +831,7 @@ BEGIN
     total := sum1 + sum2;
     RETURN total;
 END;
-$$ LANGUAGE SQL;
+$$ LANGUAGE 'plpgsql';
 ```
 
 La anterior función retorna la suma dos enteros que le pasemos como
@@ -949,30 +891,30 @@ cuales podemos utilizar desde consultas SQL o PL/pgSQL.
 Para ver un detalle de todas las funciones de PostgreSQL podéis
 consultar:
 
-<https://www.postgresql.org/docs/10/functions.html>
+<https://www.postgresql.org/docs/current/functions.html>
 
 Todas estas funciones están disponibles para ser llamadas desde
 cualquier consulta SQL. A continuación vamos a crear una tabla básica:
 
 ```sql
-CREATE TABLE empleados (id INT PRIMARY KEY, nombre TEXT, apellidos TEXT);
-INSERT INTO empleados (id,nombre,apellidos) VALUES (1, 'Diego','Nieto Caride');
-INSERT INTO empleados (id,nombre,apellidos) VALUES (2, 'ALBERT','EINSTEIN');
-INSERT INTO empleados (id,nombre,apellidos) VALUES (3,'ada','lovelace');
+CREATE TABLE personas (id INT PRIMARY KEY, nombre TEXT, apellidos TEXT);
+INSERT INTO personas (id,nombre,apellidos) VALUES (1, 'Diego','Nieto Caride');
+INSERT INTO personas (id,nombre,apellidos) VALUES (2, 'ALBERT','EINSTEIN');
+INSERT INTO personas (id,nombre,apellidos) VALUES (3,'ada','lovelace');
 ```
 
-Por ejemplo la función *lower()* convierte un string de mayúsculas a
+Por ejemplo la función ```lower()``` convierte un string de mayúsculas a
 minúsculas:
 
 ```sql
-SELECT lower(nombre) FROM empleados;
+SELECT lower(nombre) FROM personas;
 ```
 
 Esta consulta nos devolvería los nombres de todos los empleados en
 minúscula.
 
 ```sql
-SELECT upper(apellidos) FROM empleados;
+SELECT upper(apellidos) FROM personas;
 ```
 
 La anterior consulta nos devolvería los nombres de todos los empleados
@@ -982,7 +924,69 @@ También podemos utilizar las funciones en el predicado de una consulta
 de la siguiente manera:
 
 ```sql
-SELECT nombre, apellidos FROM empleados WHERE nombre = upper('diego');
+SELECT nombre, apellidos FROM personas WHERE nombre = upper('diego');
+```
+### Procedimientos 
+
+La diferencia entre procedimientos almacenados y funciones es que los procedimientos permiten ejecutar transacciones pero no devuelven ningún tipo de valor, al contrario que las funciones que si devuelven un resultado pero no permiten la ejecución de transacciones en ámbito de ejecución. 
+
+Las procedimientos se utilizan en distintos escenarios: 
+
+* Implementar lógicas de programación complejas. 
+* Ejecutar acciones antes o después de la ejecución de una consulta, utilizando el sistema de triggers. 
+* Limpiar código SQL, reusando el código común y empaquetándolo en módulos. 
+* Automatización de tareas comunes. 
+
+La sintaxis para crear un procedimiento es como sigue: 
+
+```sql
+CREATE OR REPLACE PROCEDURE add_persona(id INT, nombre TEXT, apellidos TEXT)
+LANGUAGE plpgsql AS $$
+DECLARE
+--podemos declarar las variables que queramos 
+BEGIN  
+    --start transaction; 
+    INSER INTO personas VALUES (id, nombre, appelidos);
+    COMMIT;
+END; $$ 
+```
+### Restricciones (Constraints) 
+
+PostgreSQL ofrece la posibilidad de ejecutar una función automáticamente cuando se produce un evento relacionado con una operación DML como una INSERT, UPDATE, DELETE o TRUNCATE en alguna tabla o vista. Esta funcionalidad la aportan los disparadores o triggers.  
+El Modelo E/R nos proporciona distintos tipos de restricciones de integridad que permiten establecer pautas de comportamiento en las Bases de Datos. Las restricciones son condiciones que deben ser ciertas en la Base de Datos y el SGBD se asegura de que éstas se cumplan.  
+
+Estas restricciones pueden aplicarse sobre los siguientes elementos:  
+
+* Un atributo – Restricción de atributo. Impone una condición sobre un atributo. 
+
+* Una tabla – Restricción de tabla. Impone una condición sobre varios atributos de una tabla.  
+
+* Varias tablas – Restricción general (ASSERTIONS). Impone una condición sobre varios atributos pertenecientes a varias tablas.  
+
+* Un dominio – Restricción de dominio. Éstos solamente admiten las restricciones generales (CHECK). Los tipos de restricciones disponibles son:  
+
+* Restricción de valor no nulo (NOT NULL) – Se viola si existe alguna tupla con valor nulo en el atributo. 
+
+* Restricción de unicidad (UNIQUE) – Se viola si existen dos tuplas que posean el mismo valor en el atributo. 
+
+* Restricción de clave primaria (PRIMARY KEY) – Esta restricción es una combinación de las dos anteriores. 
+
+* Restricción general (CHECK) – Esta restricción permite especificar una expresión lógica para el atributo.  
+
+* Restricción de clave foránea (FOREIGN KEY) – También conocida como integridad referencial , se viola si no existe ningún valor en el atributo de la tabla referida que se encuentre en el de la tabla de referencia.  
+
+
+Las restricciones se definen del siguiente modo: CONSTRAINT nombre de la restricción TIPO DE RESTRICCIÓN. Un ejemplo:
+
+```sql
+CREATE TABLE empleador( 
+   id INT PRIMARY KEY, 
+   nombre         TEXT NOT NULL, 
+   apellidos      TEXT NOT NULL, 
+   edad           INT NOT NULL UNIQUE, 
+   id_empleado    INT REFERENCES empleado(id), 
+   inversion      REAL CHECK(inversion > 1000) 
+);
 ```
 
 ### Lenguaje PL/pgSQL
@@ -1064,15 +1068,15 @@ anidados:
 
 DECLARE
 
-[variable 1];
+    [variable 1];
 
-[variable 2];
+    [variable 2];
 
-[variable n];
+    [variable n];
 
 BEGIN
 
-[consultas y código]
+    [consultas y código]
 
 END [etiqueta]
 ```
@@ -1101,7 +1105,10 @@ $$ LANGUAGE plpgsql;
 El parámetro \$1 es el único parámetro que pasamos a la función
 factorial, y es la manera de referirse a él, dentro de la función. Si a
 la función se le pasasen varios parámetros, nos referiríamos a ellos
-como \$2, \$3 ... etc
+como ```$2```, ```$3``` ... etc
+
+Siempre es una buena práctica utilizar nombres significativos para los parámetros de una función, en vez de referirnos a $1, así el código es más legible.
+
 
 En el cuerpo de una función podremos asignar valores a variables con el
 operador **:=**, pero el operador **=** se utiliza en estructuras de control y
@@ -1109,11 +1116,8 @@ condiciones como por ejemplo:
 
 ```sql
 constante_pi INT := 3.14159265359;
-
 apellido TEXT;
-
 apellido := 'Nieto';
-
 IF apellido = 'Nieto' THEN RAISE NOTICE '% no es un apellido correcto', apellido;
 ```
 
@@ -1123,7 +1127,7 @@ PostgreSQL soporta las estructuras condicionales IF y CASE, que permiten
 la ejecución de bloques de código si se cumplen ciertas condiciones. La
 sintáxis puede consultarse en:
 
-<https://www.postgresql.org/docs/10/plpgsql-control-structures.html#PLPGSQL-CONDITIONALS>
+<https://www.postgresql.org/docs/current/plpgsql-control-structures.html#PLPGSQL-CONDITIONALS>
 
 Para comprender como funciona la estructura IF veamos un ejemplo de como
 convertir una escala numérica a un texto descriptivo:
@@ -1150,7 +1154,7 @@ $$ LANGUAGE plpgsql;
 Ejecutando la siguiente consulta visualizamos los resultados:
 
 ```sql
-SELECT n, escala_texto(n) FROM generate_series(1,6) AS foo(n);
+SELECT n, escala_texto(n) FROM generate_series(1,6) AS n;
 ```
 
 El código de la función se ejecutará hasta que se cumpla unas de las 6
@@ -1511,6 +1515,30 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 ```
+Un ejemplo de trigger con la estructura TG_ARGS:
+
+```sql
+-- TRIGGER AFTER
+CREATE OR REPLACE FUNCTION actualizar_vl_apoyo_conductor_tramo() RETURNS TRIGGER AS $$
+BEGIN
+    IF (TG_OP = 'INSERT') OR (TG_OP = 'UPDATE') THEN
+            PERFORM funcion_rotar_apoyos();
+            PERFORM funcion_calcular_tramos(NEW.matricula);
+    ELSEIF (TG_OP = 'DELETE') THEN
+            PERFORM funcion_rotar_apoyos();
+            PERFORM funcion_calcular_tramos(OLD.matricula);
+    END IF;
+    RETURN NULL;
+END
+$$ LANGUAGE plpgsql;
+---------------------------------------------------------------------------
+-- las estructuras NEW y OLD solo en triggers ROW-LEVEL
+DROP TRIGGER vl_conductor_trigger ON vl_conductor_3857;
+CREATE TRIGGER vl_conductor_trigger AFTER INSERT OR UPDATE OR DELETE
+ON vl_conductor_3857 FOR EACH ROW
+WHEN (pg_trigger_depth() = 0)
+```
+
 
 ### Indices
 
@@ -1551,11 +1579,9 @@ a)  **B-tree index:** Estos tipos de índices son los más utilizados en
     utilizados para búsqueda por rangos, predicados de igualdad o de
     nulos y además soportan todos los tipos de datos de PostgreSQL.
 
-b)  **Hash index:** No están soportados al 100% ya que no pueden ser
+b)  **Hash index:** Antes de la versión 10 No estában soportados al 100% ya que no podían ser
     utilizados en transacciones y tampoco en sistemas de replicación
-    maestro-esclavo. Son utilizados en predicados de igualdad pero es
-    recomendable utilizar los B-tree, ya que soporta este tipo de
-    predicados.
+    maestro-esclavo. Ahora ya no existen estas limitaciones y son utilizados en predicados de igualdad, al igual que los b-tree, pero un índice hash sólo se puede utilizar en una columna. No se permiten índices hash multicolumna.
 
 c)  **Generalized inverted index (GIN):** Los índices GIN se utilizan
     cuando varios valores están mapeados con una fila y pueden ser
@@ -1598,14 +1624,14 @@ Este comando tiene que ser ejecutado como el usuario postgres. A continuación c
 
 ```sql
 CREATE TABLE coches (id SERIAL NOT NULL, matricula TEXT, fecha_matriculacion DATE,
-                    localización GEOMETRY, CONSTRAINT coches_pk PRIMARY KEY (id));
+                    localizacion GEOMETRY, CONSTRAINT coches_pk PRIMARY KEY (id));
 ```
 
 Para poder generar un conjunto de datos aleatorios, en este caso para el
 campo matricula y coordenadas utilizaremos las funciones **random()** y
 **generate_series()**
 
-<https://www.postgresql.org/docs/10/functions-srf.html>
+<https://www.postgresql.org/docs/current/functions-srf.html>
 
 Ahora construiremos una consulta que genere los anteriores datos. Para
 generar una coordenada aleatoriamente utilizaremos la función postgis:
@@ -1618,7 +1644,7 @@ Para generar una matrícula de manera aleatoria que cumpla con el formato
 "3247GFT", primero generaremos los 4 primeros números con:
 
 ```sql
-trunc(random() * 10000)
+lpad(trunc(random() * 10000)::varchar, 4, '0')
 ```
 
 y luego generaremos una letra con
@@ -1633,8 +1659,8 @@ resultados en una cadena de caracteres.
 A continuación la consulta al completo:
 
 ```sql
-INSERT INTO coches (matricula, fecha_matricula, coordenadas)
-    (SELECT trunc(random() * 10000)::varchar ||
+INSERT INTO coches (matricula, fecha_matriculacion, localizacion)
+    (SELECT lpad(trunc(random() * 10000)::varchar, 4, '0') ||
             chr(ascii('B') + (random() * 25)::integer) ||
             chr(ascii('B') + (random() * 25)::integer) ||
             chr(ascii('B') + (random() * 25)::integer),
@@ -1653,7 +1679,7 @@ coches, podríamos indexar sólo los coches matriculados antes del 2014,
 para poder avisar a sus dueños de que tienen que pasar la ITV.
 
 ```sql
-CREATE INDEX ON coches(matricula) WHERE fecha_matriculacion > '2014-01-01';
+CREATE INDEX idx_itv_2014 ON coches(matricula) WHERE fecha_matriculacion > '2014-01-01';
 ```
 
 Además, podemos crear índices en expresiones, resultados de funciones o
@@ -1661,7 +1687,7 @@ resultados de queries. Por ejemplo podemos crear un índice para todos
 los coches con matrículas pares.
 
 ```sql
-CREATE INDEX ON coches SELECT * FROM coches WHERE mod(right(matricula,4)::int,2) = 0
+CREATE INDEX idx_matriculaspares ON coches SELECT * FROM coches WHERE mod(left(matricula,4)::int,2) = 0
 ```
 
 Los índices con la característica UNIQUE (**índices únicos**) garantizan
@@ -1754,6 +1780,68 @@ reconstruir el índice con el comando:
 ```sql
 REINDEX INDEX id_coche_pkey
 ```
+Para búsquedas fuzzy (trigramas) de proximidad vamos a utilizar la extensión: 
+
+```sql
+CREATE EXTENSION pg_trgm;
+``` 
+
+El operador <-> indica la distancia que hay entre dos strings (medida de similitud) 
+
+```sql
+SELECT show_trgm(apellidos) FROM personas; 
+
+SELECT apellidos FROM personas ORDER BY apellidos <-> 'ar'; 
+
+CREATE INDEX idx_trgm ON personas USING GiST(apellidos GiST_trgm_ops); 
+```
+
+Este índice acelera las búsquedas LIKE %% además de las <-> 
+
+```sql
+SELECT nombre, apellidos FROM personas WHERE apellidos LIKE ‘%tín%’; 
+```
+
+Si tenemos muchos datos entonces sería mejor utilizar un índice de tipo GIN (cambiar Gist por Gin en la creación del índice) 
+
+Por otro lado además de buscar nombres o strings simples en un campo de tipo varchar o texto podemos tener que buscar texto de manera más avanzada. El propósito de una búsqueda full-text es el de buscar palabras o grupos de palabras en un campo de tipo texto, siendo este tipo de operación del tipo “contiene” que una búsqueda exacta. En PostgreSQL podemos hacer esto con los índices de tipo GiN. La idea es dividir un texto en “lexemas” e indexar estos elementos o lexemas en vez del texto. Para eso tenemos las funciones ```code tsvector``` y ```code tsquery```. Para ver las configs soportadas:
+
+```sql
+SELECT cfgname FROM pg_ts_config;
+```
+Como funcionan las funciones que utilizan las estructuras tsvector y tsquery:
+
+```sql
+SELECT to_tsvector('spanish', 'En un lugar de la Mancha, de cuyo nombre no quiero acordarme, vivía un hidalgo'); 
+
+SELECT to_tsvector('spanish', 'En un lugar de la Mancha, de cuyo nombre no quiero acordarme, vivía un hidalgo') @@ to_tsquery('spanish','vivía'); 
+```
+
+En este caso indexar la columna apellidos con un índice GiN es más eficiente en términos de almacenamiento pero un poco más lento con muchos datos:
+
+```sql 
+CREATE INDEX idx_personas_fts ON personas USING gin(to_tsvector('spanish', apellidos));
+```
+
+La mejor practica para esto sería añadir una columna de tipo TSVECTOR y cada vez que se inserte un dato actualizar con ```code to_tsvector``` el campo. Hacerlo con un trigger es lo ideal:
+
+```sql
+ALTER TABLE personas ADD COLUMN ts tsvector;
+CREATE TRIGGER tsvectorupdate BEFORE INSERT OR UPDATE ON personas
+    FOR EACH ROW 
+    EXECUTE PROCEDURE tsvector_update_trigger(ts, 'pg_catalog.spanish', 'apellidos');
+```
+Afortunadamente PostgreSQL tiene una función en C de tipo trigger que puede ser utilizada para actualizar la columna ts. Simplemente pasamos como parámetros la columna de tipo tsvector, el lenguaje y la columna donde está el texto.
+
+A veces no queda claro porqué una búsqueda no encuentra lo que queremos. en ese caso podemos utilizar la función ```code ts_debug```, que nos enseña los mecanismos internos de la búsqueda que estemos realizando:
+
+```sql
+SELECT ts_debug('spanish', 'En un lugar de la Mancha, de cuyo nombre no quiero acordarme, vivía un hidalgo');
+```
+
+ts_debug listará cada token con info sobre el mismo, qué diccionario ha utilizado y como ha hecho el parsing
+
+Más info en: <https://www.cybertec-postgresql.com/en/postgresql-more-performance-for-like-and-ilike-statements/>
 
 ### Vistas
 

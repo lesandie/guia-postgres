@@ -53,4 +53,4 @@ esta herramienta cartográfica está diseñada específicamente para PostgreSQL.
 
 ## Guía
 
-La guia está en: <https://github.com/lesandie/guia-postgres/guia_postgres_v21a.md>
+La guia está en: <https://github.com/lesandie/guia-postgres/blob/main/guia/guia_postgres_v21a.md>
