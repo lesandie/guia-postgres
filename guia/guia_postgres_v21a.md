@@ -1796,10 +1796,10 @@ SELECT show_trgm(apellidos) FROM personas;
 
 SELECT apellidos FROM personas ORDER BY apellidos <-> 'ar'; 
 
-CREATE INDEX idx_trgm ON personas USING GiST(apellidos GiST_trgm_ops); 
+CREATE INDEX idx_personas_trgm ON personas USING GiST(apellidos GiST_trgm_ops); 
 ```
 
-Este índice acelera las búsquedas LIKE %% además de las <-> 
+Este índice acelera las búsquedas LIKE %% además de las <-> . 
 
 ```sql
 SELECT nombre, apellidos FROM personas WHERE apellidos LIKE ‘%tín%’; 
@@ -1807,7 +1807,18 @@ SELECT nombre, apellidos FROM personas WHERE apellidos LIKE ‘%tín%’;
 
 Si tenemos muchos datos entonces sería mejor utilizar un índice de tipo GIN (cambiar Gist por Gin en la creación del índice) 
 
-Por otro lado además de buscar nombres o strings simples en un campo de tipo varchar o texto podemos tener que buscar texto de manera más avanzada. El propósito de una búsqueda full-text es el de buscar palabras o grupos de palabras en un campo de tipo texto, siendo este tipo de operación del tipo “contiene” que una búsqueda exacta. En PostgreSQL podemos hacer esto con los índices de tipo GiN. La idea es dividir un texto en “lexemas” e indexar estos elementos o lexemas en vez del texto. Para eso tenemos las funciones ```code tsvector``` y ```code tsquery```. Para ver las configs soportadas:
+Otra opción es que podríamos haber creado un índice b-tree con el operador ```text_pattern_ops``` 
+o ```varchar_pattern_ops``` pero este índice está pensado para búsquedas por prefijos, es decir
+
+```sql
+CREATE INDEX idx_personas_pattern ON personas ((lower(nombre) text_pattern_ops);
+SELECT nombre FROM personas WHERE apellidos LIKE ‘Di%’;
+```
+Utilizando la función ```lower()``` ya no haría falta utilizar el operador ILIKE, que básicamente es para búsquedas case-insensitive.
+
+Simplemente comentar que es más eficiente y rápido el índice GiST/GiN de arriba aunque ocupe más espacio en disco.
+
+Por otro lado además de buscar nombres o strings simples en un campo de tipo varchar o texto podemos tener que buscar texto de manera más avanzada. El propósito de una búsqueda full-text es el de buscar palabras o grupos de palabras en un campo de tipo texto, siendo este tipo de operación del tipo “contiene” que una búsqueda exacta. En PostgreSQL podemos hacer esto con los índices de tipo GiN. La idea es dividir un texto en “lexemas” e indexar estos elementos o lexemas en vez del texto. Para eso tenemos las funciones ```tsvector``` y ```tsquery```. Para ver las configs soportadas:
 
 ```sql
 SELECT cfgname FROM pg_ts_config;
@@ -1824,17 +1835,37 @@ En este caso indexar la columna apellidos con un índice GiN es más eficiente e
 
 ```sql 
 CREATE INDEX idx_personas_fts ON personas USING gin(to_tsvector('spanish', apellidos));
+SELECT nombre, apellidos FROM personas WHERE to_tsvector('spanish', apellidos) @@ to_tsquery('spanish','patri')
+```
+Modo multicolumna:
+```sql
+CREATE INDEX idx_personas_fts ON personas USING gin(to_tsvector('spanish', nombre || ' ' || apellidos));
+SELECT nombre, apellidos FROM personas WHERE to_tsvector('spanish', nombre || ' ' || apellidos) @@ to_tsquery('spanish','patri')
 ```
 
-La mejor practica para esto sería añadir una columna de tipo TSVECTOR y cada vez que se inserte un dato actualizar con ```code to_tsvector``` el campo. Hacerlo con un trigger es lo ideal:
+La mejor practica para esto sería añadir una columna de tipo TSVECTOR y cada vez que se inserte un dato actualizar con ```to_tsvector``` el campo. Hacerlo con un trigger es lo ideal:
 
 ```sql
-ALTER TABLE personas ADD COLUMN ts tsvector;
+ALTER TABLE personas ADD COLUMN fts_col tsvector;
 CREATE TRIGGER tsvectorupdate BEFORE INSERT OR UPDATE ON personas
     FOR EACH ROW 
-    EXECUTE PROCEDURE tsvector_update_trigger(ts, 'pg_catalog.spanish', 'apellidos');
+    EXECUTE PROCEDURE tsvector_update_trigger(fts_col, 'pg_catalog.spanish', 'apellidos');
 ```
 Afortunadamente PostgreSQL tiene una función en C de tipo trigger que puede ser utilizada para actualizar la columna ts. Simplemente pasamos como parámetros la columna de tipo tsvector, el lenguaje y la columna donde está el texto.
+
+A partir de PG12 podemos crear el índice en la columna de tipo ```tsvector``` con una nueva *feature* llamada *generated columns*. Las columnas generadas son como las vistas a las tablas.
+
+<https://www.postgresql.org/docs/current/ddl-generated-columns.html>
+
+```sql
+ALTER TABLE personas ADD COLUMN fts_col tsvector
+GENERATED ALWAYS AS (to_tsvector('spanish',
+                        coalesce(nombre, '') ||' '||
+                        coalesce(apellidos, ''))) STORED;
+CREATE INDEX idx_personas_generated_fts ON personas USING GIN (fts_col);
+```
+Este última forma es la más rápida de todas. Más info en <https://archive.fosdem.org/2020/schedule/event/postgresql_the_state_of_full_text_search_in_postgresql_12/attachments/slides/4138/export/events/attachments/postgresql_the_state_of_full_text_search_in_postgresql_12/slides/4138/FTS.pdf>
+
 
 A veces no queda claro porqué una búsqueda no encuentra lo que queremos. en ese caso podemos utilizar la función ```code ts_debug```, que nos enseña los mecanismos internos de la búsqueda que estemos realizando:
 
