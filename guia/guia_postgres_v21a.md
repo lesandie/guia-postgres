@@ -6,18 +6,17 @@ Revisión 2021
 
 ## Indice
 
-[Tema 01: Instalación y configuración de PostgreSQL](#Toc444422180)
-
-1. [Instalación](#Toc4684821)
-1.1. [Requerimientos](#Toc4684822)
-1.2. [Instalación en Windows](#Toc4684824)
-1.3. [Instalación en RedHat/CentOS](#Toc4684825)
-1.4. [Instalación en Debian/Ubuntu 7](#Toc4684826)
-2. [Configuración](#Toc444422183)
-2.1. [Arranque Automático](#Toc4684828)
-2.2. [Codificación de caracteres e idiomas](#Toc4684829)
-2.3. [Parámetros](#Toc4684830)
-3. [Actualizaciones](#Toc4684831)
+[Tema 01: Instalación y configuración de PostgreSQL](#tema01)
+1. [Instalación](#instalacion)
+1.1. [Requerimientos](#requerimientos)
+1.2. [Instalación en Windows](#windows)
+1.3. [Instalación en RedHat/CentOS](#redhat)
+1.4. [Instalación en Debian/Ubuntu 7](#debian)
+2. [Configuración](#configuracion)
+2.1. [Arranque Automático](#arranque)
+2.2. [Codificación de caracteres e idiomas](#codificacion)
+2.3. [Parámetros](#parametros)
+3. [Actualizaciones](#actualizaciones)
 
 [Tema 02: Estructura y almacenamiento en PostgreSQL](#Toc4684832)
 
@@ -50,6 +49,7 @@ Revisión 2021
 6.1. [Uso de índices](#Toc4684855)
 6.2. [Tipos de índices](#Toc4684856)
 6.3. [Estrategias de indexado](#Toc4684857)
+6.4. [Búsquedas Fuzzy y FTS] 
 7. [Vistas](#Toc4684858)
 8. [Transacciones](#Toc4684859)
 8.1. [Propiedades ACID](#Toc4684860)
@@ -106,11 +106,11 @@ Revisión 2021
 5.5. [Uso de PL/pgSQL](#Toc4684903)
 5.6. [Particionado de tablas](#Toc4684904)
 
-## Tema 01: Instalación y configuración de PostgreSQL
+## Tema 01: Instalación y configuración de PostgreSQL <a name="tema01"></a>
 
-### Instalación
+### Instalación <a name="instalacion"></a>
 
-#### Requerimientos
+#### Requerimientos <a name="requerimientos"></a>
 
 Sería necesario disponer de unos requerimientos básicos de hardware,
 software y espacio en disco. PostgreSQL es un SGBD poco pesado y se
@@ -150,7 +150,7 @@ Estos paquetes aglutinan una serie de funcionalidades añadidas que son
 interesantes. Se instalan como software añadido en la versión 9 de
 PostgreSQL pero en la versión 10 ya están integrados en la instalación.
 
-#### Instalación en Windows
+#### Instalación en Windows <a name="windows"></a>
 
 La instalación en Windows se realiza de manera gráfica. Lo primero que
 hay que hacer es bajarse el instalador gráfico de:
@@ -161,7 +161,7 @@ Una vez seleccionada la versión, que en nuestro caso es la 13 para
 Windows x64, procederemos a su instalación en nuestra máquina virtual o
 PC.
 
-#### Instalación en RedHat/CentOS
+#### Instalación en RedHat/CentOS <a name="redhat"></a>
 
 Para RedHat/CentOS debemos tener instalado el repositorio EPEL, ya que
 los paquetes de PostgreSQL tienen ciertas dependencias con paquetes
@@ -201,7 +201,7 @@ ello ejecutar:
 yum install postgresql13 postgresql13-server
 ```
 
-#### Instalación en Debian/Ubuntu
+#### Instalación en Debian/Ubuntu <a name="debian"></a>
 
 Para instalar PostgreSQL es recomendable disponer de Debian 9+ o
 Ubuntu 18.04+. Para ello debemos visitar
@@ -233,7 +233,7 @@ Finalmente instalamos postgreSQL ejecutando:
 sudo apt install postgresql-13 postgresql-client-13
 ```
 
-### Configuración
+### Configuración <a name="configuracion"></a>
 
 En nuestro caso, los ficheros de configuración que editaremos para
 configurar el comportamiento del SGBD son:
@@ -251,7 +251,7 @@ El segundo se utiliza para controlar los accesos y definir los métodos
 de autenticación. Veremos con más detalle las directivas de este fichero
 en el capítulo de seguridad.
 
-#### Arranque Automático
+#### Arranque Automático <a name="arranque"></a>
 
 Para configurar el arranque automático del servicio de PostgreSQL
 simplemente tendremos que utilizar systemctl ejecutando:
@@ -292,7 +292,7 @@ Para hacer una parada del servicio simplemente hay que ejecutar:
 sudo systemctl stop postgresql
 ```
 
-#### Codificación de caracteres e idiomas
+#### Codificación de caracteres e idiomas <a name="codificacion"></a>
 
 PostgreSQL permite almacenar texto en una gran variedad de
 codificaciones de caracteres o *encodings*, propias de cada idioma o
@@ -357,10 +357,10 @@ debido a que en Linux hay varios idiomas que sólo soportan un tipo de
 codificación por ejemplo el Koreano sólo soporta EUC sin embargo en
 Windows todos los idiomas soportan la codificación UTF-8.
 
-#### Parámetros
+#### Parámetros <a name="parametros"></a>
 
 A continuación se detallan los parámetros a configurar en el fichero
-**postgresql.conf**
+```postgresql.conf```
 
 ```bash
 # - Locale and Formatting -
@@ -395,7 +395,7 @@ Mediante este parámetro habilitamos las búsquedas de texto dentro del
 catalogo del sistema en inglés, que es su forma nativa. En posteriores
 temas veremos el catálogo de sistema.
 
-#### Actualizaciones
+#### Actualizaciones <a name="actualizaciones"></a>
 
 Como habréis podido comprobar, la versión de PostgreSQL consiste en 3
 dígitos:
@@ -413,8 +413,8 @@ corregir errores (bug fixes), mientras que una reléase mayor, aporta
 nuevas funcionalidades y cambios, que pueden entrar en conflicto con la
 versión de postgreSQL que tengamos corriendo. En caso de actualizar a
 una release mayor o a una N.0.0, será necesario que hagamos un volcado
-lógico de nuestras bases de datos con *pg_dump* y después de actualizar
-hagamos un *pg_restore*
+lógico de nuestras bases de datos con ```pg_dump``` y después de actualizar
+hagamos un ```pg_restore```
 
 Para actualizar los paquetes hay que utilizar los gestores de paquetes
 de RedHat o Debian, yum y apt respectivamente:
