@@ -1783,6 +1783,15 @@ reconstruir el índice con el comando:
 ```sql
 REINDEX INDEX id_coche_pkey
 ```
+
+Es interesante ver el concepto de TOAST y como afecta a los índices en tipos TEXT:
+<https://hakibenita.com/sql-medium-text-performance>
+
+y como liberar espacio que ocupan los índices: 
+<https://hakibenita.com/postgresql-unused-index-size>
+
+
+##### Búsquedas Fuzzy y Full-Text-Search (FTS)
 Para búsquedas fuzzy (trigramas) de proximidad vamos a utilizar la extensión: 
 
 ```sql
@@ -1817,6 +1826,8 @@ SELECT nombre FROM personas WHERE apellidos LIKE ‘Di%’;
 Utilizando la función ```lower()``` ya no haría falta utilizar el operador ILIKE, que básicamente es para búsquedas case-insensitive.
 
 Simplemente comentar que es más eficiente y rápido el índice GiST/GiN de arriba aunque ocupe más espacio en disco.
+
+Mas info <https://blog.crunchydata.com/blog/fuzzy-name-matching-in-postgresql>
 
 Por otro lado además de buscar nombres o strings simples en un campo de tipo varchar o texto podemos tener que buscar texto de manera más avanzada. El propósito de una búsqueda full-text es el de buscar palabras o grupos de palabras en un campo de tipo texto, siendo este tipo de operación del tipo “contiene” que una búsqueda exacta. En PostgreSQL podemos hacer esto con los índices de tipo GiN. La idea es dividir un texto en “lexemas” e indexar estos elementos o lexemas en vez del texto. Para eso tenemos las funciones ```tsvector``` y ```tsquery```. Para ver las configs soportadas:
 
@@ -2758,6 +2769,8 @@ Y la última funcionalidad de VACUUM, es la de prevenir fallos por la
 haya ejecutado más de 4 billones de transacciones puede tener problemas
 con la reutilización de IDs.
 
+<https://www.postgresql.org/docs/current/runtime-config-autovacuum.html>
+
 #### Catalogo del sistema y estadísticas
 
 PostgreSQL, utiliza varios esquemas para describir todos los objetos, a
@@ -2778,9 +2791,9 @@ Ambos esquemas tienen cientos de vistas, tablas, funciones y otros
 objetos, así que sólo veremos algunas de las más importantes. Para
 consultar los contenidos de ambos esquemas:
 
-<https://www.postgresql.org/docs/10/static/catalogs.html>
+<https://www.postgresql.org/docs/current/static/catalogs.html>
 
-<https://www.postgresql.org/docs/10/static/information-schema.html>
+<https://www.postgresql.org/docs/current/static/information-schema.html>
 
 La tabla *pg_class* es una de las tablas más importantes de
 *pg_catalog,* ya que incluye información sobre tipos de relaciones,
@@ -2814,7 +2827,7 @@ utilizar las estadísticas actualizadas que nos facilita
 permite obtener datos pormenorizados del uso de objetos, tanto de
 sistema como de nuestras bases de datos:
 
-<https://www.postgresql.org/docs/10/static/monitoring-stats.html>
+<https://www.postgresql.org/docs/current/static/monitoring-stats.html>
 
 Por ejemplo la vista pg_stat_activity nos devuelve una fila por cada
 proceso activo en PostgreSQL, con información sobre su estado, la query
@@ -3118,7 +3131,7 @@ dígitos con numeración hexadecimal:
 
 ```bash
 pwd
-/var/lib/postgresql/10/data/pg_wal
+/var/lib/postgresql/13/data/pg_wal
 
 ls -l
 total 688132
@@ -3162,7 +3175,7 @@ los cambios al log, y no a la base de datos. Si la distancia entre
 checkpoints es muy corta, los datos se escribirán en el log y en la base
 de datos.
 
-![wal](./media/image8.png)
+<img src="./media/image8.png" alt="cv" width="800"/><br>
 
 Teniendo en cuenta esto, los valores recomendados para el WAL serían:
 
@@ -3204,13 +3217,13 @@ transmisión, en vez de copiar ficheros, lo cual es más costoso.
 
 A continuación tenemos que crear un directorio, a ser posible en en
 mismo nivel donde están las bases de datos en postgres
-/var/lib/postgresql/10/main. Le llamaremos *archive*. Para activar el modo
+/var/lib/postgresql/13/main. Le llamaremos *archive*. Para activar el modo
 archivado haynque configurar los siguientes parámetros en el fichero
 **postgresql.conf**:
 
 ```bash
 archive_mode = on
-archive_command = 'rsync -a %p /var/lib/postgresql/10/main/archive/%f
+archive_command = 'rsync -a %p /var/lib/postgresql/13/main/archive/%f
 ```
 
 Guardamos los cambios y hacemos un restart del servicio para propagar
@@ -3268,7 +3281,7 @@ que hemos activado el archivado en la configuración, se están copiando
 los logs de transacciones:
 
 ```bash
-ls -l /var/lib/postgresql/10/main/archive
+ls -l /var/lib/postgresql/13/main/archive
 
 total 212996
 -rw------- 1 postgres postgres 16777216 Jan 30 09:04
@@ -3298,7 +3311,7 @@ tiene datos meramente estadísticos y el timestamp de inicio del backup.
 #### Proceso de restauración
 
 A continuación vamos a proceder a hacer una restauración PITR. Los
-ficheros de la base de datos están en /var/lib/postgresql/10/main así
+ficheros de la base de datos están en /var/lib/postgresql/13/main así
 que primero, borraremos el contenido de este directorio y acto seguido
 copiaremos los contenidos de nuestra copia de seguridad localizada en
 /mnt/backup:
@@ -3306,14 +3319,14 @@ copiaremos los contenidos de nuestra copia de seguridad localizada en
 ```bash
 cd /mnt/backup
 
-cp -av * /var/lib/postgresql/10/main
+cp -av * /var/lib/postgresql/13/main
 ```
 
 Acto seguido creamos un fichero llamado *recovery.conf* en el directorio
 $PGDATA con las siguientes variables
 
 ```bash
-restore_command = 'rsync -a /var/lib/postgresql/10/main/archive/%f %p'
+restore_command = 'rsync -a /var/lib/postgresql/13/main/archive/%f %p'
 
 recovery_target_time = '2019-01-11 16:55:12'
 ```
@@ -3515,7 +3528,11 @@ mismas (autovacuum). Con estas estadísticas postgres puede elegir el
 plan de ejecución de menor coste para una consulta. El coste de una
 consulta se calcula teniendo en cuenta las IOPs y los ciclos de CPU.
 
+Info en <https://blog.crunchydata.com/blog/tentative-smarter-query-optimization-in-postgres-starts-with-pg_stat_statements>
+
 #### EXPLAIN y plan de consultas
+
+Info en: <https://arctype.com/blog/postgresql-query-plan-anatomy/>
 
 PostgreSQL permite generar previamente el plan de consultas, para
 visualizar el comportamiento que tendría una consulta. El comando
@@ -3524,7 +3541,7 @@ recuperan los datos de las tablas; por ejemplo, se pueden recuperar
 datos de una tabla mediante un escaneado por índice o secuencial.También
 nos muestra las operaciones JOIN entre tablas y el número de filas:
 
-![](./media/image9.png)
+<img src="./media/image9.png" alt="cv" width="900"/><br>
 
 Ejemplo visual de EXPLAIN
 
