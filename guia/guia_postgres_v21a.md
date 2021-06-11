@@ -57,54 +57,54 @@ Revisión 2021
 8.3. [Checkpoints y Savepoints](#checkpoint)
 8.4. [Concurrencia y niveles de aislamiento](#concurrencia)
 
-[Tema 04: Seguridad en PostgreSQL](#Toc4684864)
+[Tema 04: Seguridad en PostgreSQL](#seguridad)
 
-1. [Mecanismos de autenticación](#Toc4684865)
-2. [Estructura de pg_hba.conf](#Toc4684866)
-3. [Mecanismos de cifrado](#Toc4684867)
-3.1. [Conexiones seguras con SSL](#Toc4684868)
-3.2. [Túneles SSH](#Toc4684869)
-4. [Acceso y privilegios del sistema (proxy auth)](#Toc4684870)
-5. [Niveles de seguridad](#Toc4684871)
+1. [Mecanismos de autenticación](#autenticacion)
+2. [Estructura de pg_hba.conf](#pghba)
+3. [Mecanismos de cifrado](#cifrado)
+3.1. [Conexiones seguras con SSL](#ssl)
+3.2. [Túneles SSH](#ssh)
+4. [Acceso y privilegios del sistema (proxy auth)](#proxyauth)
+5. [Niveles y políticas de seguridad](#politicas)
 
-[Tema 05: Monitorización y mantenimiento](#Toc4684872)
+[Tema 05: Monitorización y mantenimiento](#tema05)
 
-1. [Inicio y parada con pg_ctl](#Toc4684873)
-2. [Configuración de logs](#Toc4684874)
-2.1. [Destinos de log y parámetros de configuración](#Toc4684875)
-2.2. [Formateo de logs para facilitar su lectura](#Toc4684876)
-2.3. [Mantenimiento y limpieza](#Toc4684877)
-2.4. [Catalogo del sistema y estadísticas](#Toc4684878)
+1. [Inicio y parada con pg_ctl](#pg_ctl)
+2. [Configuración de logs](#logging)
+2.1. [Destinos de log y parámetros de configuración](#logs1)
+2.2. [Formateo de logs para facilitar su lectura](#logs2)
+2.3. [Mantenimiento y limpieza](#logs3)
+2.4. [Catalogo del sistema y estadísticas](#catalogo)
 
-[Tema 06: Copias de seguridad y restauración](#Toc4684879)
+[Tema 06: Copias de seguridad y restauración](#tema06)
 
-1. [Importado y exportado de datos](#Toc4684880)
-2. [Copias de seguridad](#Toc4684881)
-2.1. [Parámetros y formato de backups](#Toc4684882)
-3. [Restauración](#Toc4684883)
-4. [Restauración Point-in-Time](#Toc4684884)
-4.1. [Log de transacciones (WAL)](#Toc4684885)
-4.2. [Configuración de archivado](#Toc4684886)
-4.3. [Copias base](#Toc4684887)
-4.4. [Proceso de restauración](#Toc4684888)
-5. [Automatización de backups](#Toc4684889)
+1. [Importado y exportado de datos](#import)
+2. [Copias de seguridad](#backups1)
+2.1. [Parámetros y formato de backups](#backups2)
+3. [Restauración](#restore)
+4. [Restauración Point-in-Time](#pitr)
+4.1. [Log de transacciones (WAL)](#wal2)
+4.2. [Configuración de archivado](#archiving)
+4.3. [Copias base](#pg_basebackup)
+4.4. [Proceso de restauración](#restoring)
+5. [Automatización de backups](#auto)
 
-[Tema 07: Rendimiento y optimización](#Toc4684890)
+[Tema 07: Rendimiento y optimización](#tema07)
 
-1. [Consideraciones hardware](#Toc4684891)
-2. [Configuración OLTP/OLAP](#Toc4684892)
-3. [Número de conexiones](#Toc4684893)
-4. [Memoria](#Toc4684894)
-4.1. [Shared buffers](#Toc4684895)
-4.2. [Working Memory](#Toc4684896)
-4.3. [Effective cache size](#Toc4684897)
-5. [Optimización de consultas](#Toc4684898)
-5.1. [EXPLAIN y plan de consultas](#Toc4684899)
-5.2. [Errores en la escritura de consultas](#Toc4684900)
-5.3. [Uso erróneo de índices](#Toc4684901)
-5.4. [Uso erróneo de CTEs (Common Table Expressions)](#Toc4684902)
-5.5. [Uso de PL/pgSQL](#Toc4684903)
-5.6. [Particionado de tablas](#Toc4684904)
+1. [Consideraciones hardware](#hardware)
+2. [Configuración OLTP/OLAP](#oltpolap)
+3. [Número de conexiones](#conexiones)
+4. [Memoria](#memoria)
+4.1. [Shared buffers](#sharedbuffers)
+4.2. [Working Memory](#workingmem)
+4.3. [Effective cache size](#effectivecache)
+5. [Optimización de consultas](#optimizacion)
+5.1. [EXPLAIN y plan de consultas](#explain)
+5.2. [Errores en la escritura de consultas](#errores1)
+5.3. [Uso erróneo de índices](#errores2)
+5.4. [Uso erróneo de CTEs (Common Table Expressions)](#errores3)
+5.5. [Uso de PL/pgSQL](#errores4)
+5.6. [Particionado de tablas](#particionado)
 
 ## Tema 01: Instalación y configuración de PostgreSQL <a name="tema01"></a>
 
@@ -2080,7 +2080,7 @@ propia transacción o a nivel de base de datos:
 ALTER DATABASE <nombre_bd> SET DEFAULT_TRANSACTION_ISOLATION TO {SERIALIZABLE | REPEATABLE READ | READ COMMITTED | READ UNCOMMITTED}
 ```
 
-## Tema 04: Seguridad en PostgreSQL
+## Tema 04: Seguridad en PostgreSQL <a name="tema04"></a>
 
 En este capítulo abordaremos la securización de PostgreSQL y la
 protección de datos. Hay que garantizar la seguridad y la protección de
@@ -2104,7 +2104,7 @@ el sistema esté protegido, pero necesitaremos más recursos hardware para
 afrontar la complejidad añadida al sistema por las capas de seguridad
 que hayamos definido.
 
-### Mecanismos de autenticación
+### Mecanismos de autenticación <a name="autenticacion"></a>
 
 La autenticación responde a la pregunta: ¿quién es el usuario?.
 PostgreSQL soporta varios métodos de autenticación, todos configurables
@@ -2138,7 +2138,7 @@ f)  **Password**: Que proporciona 3 métodos, *scram-sha-256* y *md5* en
     utilizar el password sin cifrar pero este método es desaconsejable
     ya que se enviaría al servidor PostgreSQL en formato texto visible.
 
-### Estructura de pg_hba.conf
+### Estructura de pg_hba.conf <a name="pghba"></a>
 
 Este fichero controla la autenticación en PostgreSQL, (hba = Host Based
 Authentication) y está localizado en el directorio de postgres
@@ -2166,7 +2166,7 @@ A su vez, en el fichero *postgresql.conf* se puede especificar el puerto
 de escucha del servicio, normalmente 5432 y en que interfaz o dirección
 ip escuchar.
 
-### Mecanismos de cifrado
+### Mecanismos de cifrado <a name="cifrado"></a>
 
 Normalmente, la configuración de una instancia PostgreSQL suele ser sin
 conexiones seguras/cifradas. Esto en principio no entraña ningún
@@ -2174,7 +2174,7 @@ problema de seguridad, a nivel de autenticación, simpre y cuando hayamos
 configurado un sistema de autenticación seguro, como hemos explicado en
 el subcapítulo anterior.
 
-#### Conexiones seguras con SSL
+#### Conexiones seguras con SSL <a name="ssl"></a>
 
 Hay entornos de alta privacidad y seguridad en los que una conexión no
 segura puede exponer vectores de ataque para explotar vulnerabilidades
@@ -2227,7 +2227,7 @@ scram-sha-256
 
 Más sobre scram-sha-256: <https://en.wikipedia.org/wiki/Salted_Challenge_Response_Authentication_Mechanism>
 
-#### Túneles SSH
+#### Túneles SSH <a name="ssh"></a>
 
 Otra manera de "securizar" conexiones entre clientes y el servidor es
 utilizando túneles SSH. Este método es interesante para clientes que no
@@ -2253,7 +2253,7 @@ Después desde el cliente utilizaremos el comando:
 psql -h localhost -p 63333 -U postgres
 ```
 
-### Acceso y privilegios del sistema (proxy auth)
+### Acceso y privilegios del sistema (proxy auth) <a name="proxyauth"></a>
 
 En este apartado profundizaremos un poco más en el sistema de roles de
 postgres, de los cuales hablamos en el capítulo 2.
@@ -2270,7 +2270,7 @@ añadir una capa de seguridad más, es delegar la autenticación en un rol
 y la conexión a la base de datos a otro. Esto es lo que se conoce como
 proxy auth y se utiliza el comando SET ROLE.
 
-### Niveles de seguridad
+### Niveles  y políticas de seguridad <a name="politicas"></a>
 
 PostgreSQL tiene distintos niveles de seguridad para tablespaces,
 databases, esquemas, tablas, secuencias, lenguages y demás objetos.
@@ -2365,7 +2365,7 @@ CREATE POLICY name ON table_name
 [ WITH CHECK ( check_expression ) ]
 ```
 
-## Tema 05: Monitorización y mantenimiento
+## Tema 05: Monitorización y mantenimiento <a name="tema05"></a>
 
 En este módulo, veremos como monitorizar una instancia. El objetivo es
 proporcionar un conjunto de herramientas y técnicas para poder comprobar
@@ -2375,10 +2375,10 @@ correctamente para los escenarios más comunes. También veremos como el
 funciona el proceso VACUUM, encargado del mantenimiento y liberación de
 espacio del postgres.
 
-### Inicio y parada con pg_ctl
+### Inicio y parada con pg_ctl <a name="pg_ctl"></a>
 
 Para iniciar y parar el servicio se suele utilizar la utilidad
-**pg_ctl**:
+```pg_ctl```:
 
 ```bash
 Usage:
@@ -2424,14 +2424,14 @@ configuración. Ambas utilidades pueden ser utilizadas en Windows o
 Linux.
 
 Para más comodidad, casi todas las distribuciones Linux integran
-**pg_ctl** con **systemd** de manera que podemos utilizar systemd para
+```pg_ctl``` con ```systemd``` de manera que podemos utilizar systemd para
 arrancar, parar, recargar, etc el servicio:
 
 ```bash
 systemctl start postgresql.service
 ```
 
-### Configuración de logs
+### Configuración de logs <a name="logging"></a>
 
 Los ficheros de log son una parte muy importante de la monitorización y
 detección de errores de postgres (a.k.a PostgreSQL). Dependiendo de las
@@ -2459,7 +2459,7 @@ ficheros específicos en un directorio. Este directorio suele ser
 Esto hace más fácil la lectura y procesamiento de los mismos, ya que no
 están en un log común con el resto de servicios del sistema operativo.
 
-#### Destinos de log y parámetros de configuración
+#### Destinos de log y parámetros de configuración <a name="logs1"></a>
 
 En el fichero de configuración postgresql.conf podemos configurar los
 destinos del log de postgres:
@@ -2524,7 +2524,7 @@ Hay que tener en cuenta que en el nivel all el fichero de log se llena
 rápidamente y puede hacer que nos quedemos sin espacio de almacenamiento
 en disco.
 
-#### Formateo de logs para facilitar su lectura
+#### Formateo de logs para facilitar su lectura <a name="logs2"></a>
 
 Es importante poder formatear la salida del log para que nos devuelva
 información interesante sobre lo que está pasando. En el fichero
@@ -2573,7 +2573,7 @@ consultas lentas o el tiempo que ha durado un deadlock.
 # log_lock_waits = off
 ```
 
-#### Mantenimiento y limpieza
+#### Mantenimiento y limpieza <a name="logs3"></a>
 
 Dentro de este apartado hablaremos de varios temas, el primero es sobre
 la gestión del espacio de almacenamiento mediante **tablespaces**.
@@ -2770,7 +2770,7 @@ con la reutilización de IDs.
 
 <https://www.postgresql.org/docs/current/runtime-config-autovacuum.html>
 
-#### Catalogo del sistema y estadísticas
+#### Catálogo del sistema y estadísticas <a name="catalogo"></a>
 
 PostgreSQL, utiliza varios esquemas para describir todos los objetos, a
 nivel de instancia y a nivel de base de datos. Estos esquemas tienen
@@ -2879,7 +2879,7 @@ interesante como por ejemplo si una tabla es de tipo temporal o
 unlogged, si un trigger tiene una acción condicional (WHEN) o si una
 vista es de tipo actualizable (UPDATABLE) o insertable (INSERTABLE).
 
-## Tema 06: Copias de seguridad y restauración
+## Tema 06: Copias de seguridad y restauración <a name="tema06"></a>
 
 Este tema va a tratar sobre copias de seguridad (*backups* para
 abreviar) y sobre como restaurar (*restores* para abreviar) dichas
@@ -2893,7 +2893,7 @@ A lo largo del tema veremos una serie de escenarios con ejemplos para
 crear y restaurar backups, ya que postgreSQL dispone de las herramientas
 pg_dump y pg_restore para realizar estas tareas.
 
-### Importado y exportado de datos
+### Importado y exportado de datos <a name="import"></a>
 
 En PostgreSQL hay dos maneras de exportar datos:
 
@@ -2910,9 +2910,9 @@ Para importar datos se utiliza el comando pg_restore que importa
 *dumps* o en el caso de disponer de un script SQL, con el comando psql,
 pero esta es la forma más lenta de importar datos.
 
-### Copias de seguridad
+### Copias de seguridad <a name="backups1"></a>
 
-Para crear una copia de seguridad, simplemente ejecutamos el siguiente
+Para crear una copia de seguridad lógica, simplemente ejecutamos el siguiente
 comando:
 
 ```bash
@@ -2921,8 +2921,8 @@ pg_dump curso-postgresql > /tmp/dump.sql
 
 El primer parámetro *curso-postgres*, es el nombre de la base de datos y
 la salida de este comando se redirige a un fichero en la carpeta tmp con
-el parámetro >. El comando *pg_dump* y otros comandos como
-*pg_restore* o *psql*, tienen una serie de parámetros comunes para
+el parámetro >. El comando ```pg_dump``` y otros comandos como
+```pg_restore``` o ```psql```, tienen una serie de parámetros comunes para
 configurar el usuario, contraseña o *host* a la hora de conectarse a una
 base de datos o hacer un backup:
 
@@ -2939,7 +2939,7 @@ happen automatically)
 --role=ROLENAME do SET ROLE before dump
 ```
 
-Básicamente el comando *pg_dump*, se conecta a la instancia que haya
+Básicamente el comando ```pg_dump```, se conecta a la instancia que haya
 corriendo en *localhost*, selecciona la base de datos curso-postgresql,
 abre una transacción de tipo REPEATABLE READ (para asegurar la
 consistencia de los datos), lee dichos datos y los exporta en formato
@@ -2965,7 +2965,7 @@ export PGDATABASE=curso-postgresql
 
 psql
 
-psql (10.1) Type "help" for help.
+psql (13.2) Type "help" for help.
 ```
 
 Como podemos observar, no ha sido necesario especificar ningún parámetro
@@ -2982,7 +2982,7 @@ Un ejemplo:
 **localhost:5432:curso-postgresql:dnieto:abc**
 
 Además postgresql ofrece otro método para almacenar credenciales
-mediante ficheros de servicio o *.pg_service.conf*, también localizados
+mediante ficheros de servicio o ```.pg_service.conf```, también localizados
 en el directorio home del usuario. Un ejemplo del formato:
 
 ```bash
@@ -3025,7 +3025,7 @@ Y tendremos todos los datos de conexión de ese servicio exportados al
 resto de variables de entorno. Esto ayuda mucho a automatizar tareas de
 backup mediante *scripts o ficheros de instrucciones.*
 
-#### Parámetros y formato de backups
+#### Parámetros y formato de backups <a name="backups2"></a>
 
 La utilidad pg_dump dispone de una serie de parámetros para modular qué
 datos y en que cantidades podemos exportarlos:
@@ -3073,12 +3073,12 @@ universal como el de tipo texto es que está comprimido y ocupa mucho
 menos espacio. El problema es que este formato no sirve para trabajar
 entre distintas versiones de PostgreSQL de tipo mayor. El anterior dump
 que hemos hecho con las versión 10, sólo serviría para la versión 10 y
-anteriores, pero no para la versión 11.
+anteriores, pero no para la versión 13. Para ello lo mejor es hacer un ```pg_dump``` con la versión de PostgreSQL donde vayamos a hacer el ```pg_restore```.
 
-### Restauración
+### Restauración <a name="restore"></a>
 
 La utilidad para restaurar datos y estructuras desde un backup es
-pg_restore. Tiene los mismos parámetros de formato y conexión que
+```pg_restore```. Tiene los mismos parámetros de formato y conexión que
 pg_dump. Para recuperar un backup de tipo texto sin comprimir se
 utilizaría la utilidad psql de la siguiente manera:
 
@@ -3104,16 +3104,16 @@ Con el comando de arriba recuperaremos los datos del fichero dump.fc en
 la base de datos curso-postgresql. El parámetro j es para utilizar 2
 cores/procesadores para acelerar el proceso de recuperación.
 
-### Restauración Point-in-Time
+### Restauración Point-in-Time <a name="pitr"></a>
 
 Los sistemas de bases de datos, disponen de una serie de funciones para
 garantizar que se pueden recuperar de una caída del sistema y volver al
 punto anterior a la caída, cumpliendo así con una de las propiedad ACID
 que garantiza la integridad de los datos. En el caso de PostgreSQL, es
 el Write-Ahead Log (WAL) o log de transacciones el encargado de
-facilitar esta funcionalidad.
+facilitar esta funcionalidad. Lo veremos más adelante en un ejemplo práctico.
 
-#### Log de transacciones (WAL)
+#### Log de transacciones (WAL) <a name="wal2"></a>
 
 Como habíamos visto en el tema 3, la idea del WAL es: no se escriben los
 datos directamente a la base de datos, si no que se van escribiendo en
@@ -3184,7 +3184,7 @@ max_wal_size = 2GB
 min_wal_size = 512MB
 ```
 
-#### Configuración de archivado
+#### Configuración de archivado <a name="archiving"></a>
 
 Ahora vamos a proceder a configurar postgres para poder ejecutar
 Restauraciones Point-in-Time (PITR). Las copias PITR son más ventajosas
@@ -3201,7 +3201,7 @@ wal_buffers = 16MB
 max_wal_senders = 5
 ```
 
-La variable *wal_level*, especifica el nivel de detalle del log de
+La variable ```wal_level```, especifica el nivel de detalle del log de
 transacciones, algo parecido al nivel de detalle de los logs. El valor
 replica es el recomendado para PITR y replicación.
 
@@ -3209,9 +3209,9 @@ Otra variable para incrementar el rendimiento es hacer que los buffers
 de memoria sean del mismo tamaño que el wal, así la escritura de memoria
 al wal es directa.
 
-La otra variable *max_wal_senders* permite transmitir el WAL (se conoce
+La otra variable ```max_wal_senders``` permite transmitir el WAL (se conoce
 como streaming) para almacenarlo en otras localizaciones. Esto va a
-permitir a la utilidad pg_basebackup crear un backup a partir de una
+permitir a la utilidad ```pg_basebackup``` crear un backup a partir de una
 transmisión, en vez de copiar ficheros, lo cual es más costoso.
 
 A continuación tenemos que crear un directorio, a ser posible en en
@@ -3234,7 +3234,7 @@ comandos de copia, para transmitir el WAL, como rsync o scp. Por
 sencillez, dejaremos cp, pero rsync es el comando más interesante para
 utilizar.
 
-Por último, hay que añadir unos parámetros en el fichero *pg_hba.conf*,
+Por último, hay que añadir unos parámetros en el fichero ```pg_hba.conf```,
 el mismo que vimos en el capítulo de seguridad:
 
 ```bash
@@ -3259,7 +3259,7 @@ host    replication     all     127.0.0.1/32    trust
 host    replication     all     ::1/128         trust
 ```
 
-#### Copias base
+#### Copias base <a name="pg_basebackup"></a>
 
 Ahora vamos a crear el primer backup o copia base. La idea es disponer
 de una copia base y recuperar partes del WAL para llegar a una marca de
@@ -3300,14 +3300,14 @@ total 212996
 ```
 
 Además podemos consultar información interesante del proceso de
-archivado de logs consultando la vista del catálogo pg_stat_archiver
+archivado de logs consultando la vista del catálogo ```pg_stat_archiver```
 que nos va a servir para monitorizar el proceso de archivado y si se
 comporta correctamente o hay errores.
 
 El fichero con extensión .backup lo genera el comando pg_basebackup y
 tiene datos meramente estadísticos y el timestamp de inicio del backup.
 
-#### Proceso de restauración
+#### Proceso de restauración <a name="restoring"></a>
 
 A continuación vamos a proceder a hacer una restauración PITR. Los
 ficheros de la base de datos están en /var/lib/postgresql/13/main así
@@ -3321,16 +3321,21 @@ cd /mnt/backup
 cp -av * /var/lib/postgresql/13/main
 ```
 
-Acto seguido creamos un fichero llamado *recovery.conf* en el directorio
+Acto seguido, si nuestra versión de PostgreSQL es <=11 creamos un fichero llamado ```recovery.conf``` en el directorio
 $PGDATA con las siguientes variables
 
 ```bash
 restore_command = 'rsync -a /var/lib/postgresql/13/main/archive/%f %p'
-
 recovery_target_time = '2019-01-11 16:55:12'
 ```
+También podemos utilizar ```recovery_target_time = 'inmediate'```
 
-Ahora probamos a levanter el servicio de postgres con el comando
+Si estamos utilizando PostgreSQL >= 12 entonces las variables anteriores están en el fichero ```postgresql.conf```. Es importante saber que si estamos con una PostgreSQL 12 y hemos creado el fichero ```recovery.conf``` por equivocación, el SGBDR  no arrancará:
+
+<https://www.postgresql.org/docs/13/recovery-config.html>
+
+
+Ahora probamos a levantar el servicio de postgres con el comando
 systemctl y podremos ver en el log de postgres:
 
 ```bash
@@ -3366,7 +3371,7 @@ LOG: autovacuum launcher started
 Para finalizar y despues de una restauración, podemos borrar el espacio
 utilizado por los logs archivados con el comando pg_archivecleanup.
 
-### Automatización de backups
+### Automatización de backups <a name="auto"></a>
 
 No hay una manera fácil de automatizar las copias de seguridad. Para
 ello se utilizan distintas recetas, como *shellscripts* ejecutados por
@@ -3381,7 +3386,9 @@ archivos del log de transacciones de mayor antigüedad. Si tuviésemos una
 caída del servicio podríamos recuperar la copia base de ese día y hacer
 una recuperación PITR utilizando los logs de transacciones archivados.
 
-## Tema 07: Rendimiento y optimización
+En el directorio ```ejemplos``` del repositorio hay varios ejemplos de scripts para realizar las tareas anteriores.
+
+## Tema 07: Rendimiento y optimización <a name="tema07"></a>
 
 Hay varios aspectos que hay que tener en cuenta para optimizar un
 sistema gestor de bases de datos o SGBD, entre ellos configuración
@@ -3390,7 +3397,7 @@ reescritura de consultas, mantenimiento de índices, etc. En este módulo
 veremos los aspectos más importantes que influyen directamente en el
 rendimiento de nuestro SGBD.
 
-### Consideraciones hardware
+### Consideraciones hardware <a name="hardware"></a>
 
 PostgreSQL depende básicamente de CPU y acceso a disco (IOPS:
 Input/Output Ops per second ). La memoria es otro parámetro que ayuda a
@@ -3404,7 +3411,7 @@ Los discos electromecánicos, tienen un rendimiento mucho menor, ya que
 las operaciones random o secuenciales, son más lentas que en un SSD (5
 veces menos).
 
-#### Configuración OLTP/OLAP
+#### Configuración OLTP/OLAP <a name="oltpolap"></a>
 
 Para mejorar el rendimiento de una instancia postgres, es necesario
 conocer la naturaleza del sistema, es decir, si va a ser utilizado para
@@ -3437,9 +3444,13 @@ parámetros se encuentran en el fichero de configuración postgresql.cof
 
 Un punto de partida interesante comienza en la wiki de postgresql
 
-https://wiki.postgresql.org/wiki/Tuning_Your_PostgreSQL_Server
+<https://wiki.postgresql.org/wiki/Tuning_Your_PostgreSQL_Server>
 
-### Número de conexiones
+Hay una utilidad para calcular distintos parámetros dependiendo del tamaño de la memoria, tipo de discos y entornos de uso:
+
+<https://www.pgconfig.org/#/?max_connections=100&pg_version=13&environment_name=WEB&total_ram=4&cpus=2&drive_type=SSD&arch=x86-64&os_type=linux>
+
+### Número de conexiones <a name="conexiones"></a>
 
 Este parámetro afecta directamente a la cantidad de memoria RAM, ya que
 cada conexión consume memoria. El parámetro *max_connections*
@@ -3453,36 +3464,35 @@ En sistemas en producción grandes, podría llegar hasta 1000 (esto es
 para un nodo o máquina).
 
 Abrir y cerrar conexiones cuesta tiempo de CPU y memoria, así que para
-sistemas grandes o clusterizaciones, lo mejor es utilizar un software de
-**pooling**, que se encargaría de la gestión de las conexiones y su
-optimización.
+sistemas grandes o clusterizaciones, lo mejor es utilizar un **pool** de conexiones, que se encargaría de la gestión de las conexiones y su
+optimización, además de aportar un entorno de ha y balanceo de carga
 
 a)  PgBouncer
 
-b)  Pgpool-II (añade alta disponibilidad)
+b)  Pgpool-II (añade alta disponibilidad y balanceo)
 
-### Memoria
+### Memoria <a name="memoria"></a>
 
 Hay 3 parámetros que van a tener mucho impacto en el rendimiento de
 nuestra instancia, dado que necesitamos saber quien y como se está
 consumiendo la memoria para controlar y optimizar su uso.
 
-#### Shared buffers
+#### Shared buffers <a name="sharedbuffers"></a>
 
 El parámetro shared_buffers es común también en distintos SGBDRs como
 mariadb o mysql, ya que tiene un impacto directo sobre el rendimiento y
 consumo de memoria. Cuanta más RAM dediquemos a postgres mejor será el
 rendimiento ya que es más rápido acceder a la RAM que al disco. Un valor
-conservador sería utilizar un ¼ del total de la memoria de nuestro
-hardware. En un entorno de desarrollo quizás, sería mejor utilizar 1/8.
+conservador sería utilizar un 1/4 el total de la memoria de nuestro
+hardware pudiendo llegar a 1/3 o 1/2 dependiendo del entorno al que estaría dedicado. En un entorno de desarrollo quizás, sería mejor utilizar 1/8.
 
-#### Working Memory
+#### Working Memory <a name="workingmem"></a>
 
 El valor por defecto del parámetro work_mem es de 4MB, insuficiente
 para sistemas en producción. Este parámetro es directamente proporcional
 al número de conexiones, así que el uso de RAM va a igual al número de
 conexiones multiplicado por work_mem y el máximo de RAM consumida será
-igual a max_connections * work_mem
+igual a ```max_connections * work_mem```
 
 La memoria de trabajo (work_mem) se utiliza en operaciones de ordenado
 (sorting) y de indexado (hashing), así que afecta a consultas que
@@ -3506,7 +3516,7 @@ Function Scan on generate_series foo (cost=0.00..10.00 rows=1000 width=4)(actual
 Total runtime: 0.100 ms
 ```
 
-#### Effective cache size
+#### Effective cache size <a name="effectivecache"></a>
 
 *effective_cache_size* debe tener un valor con una estimación de la
 memoria que se podría destinar a la cache de disco, tanto para el SO
@@ -3517,7 +3527,7 @@ Este parámetro es complementario al de shared_buffers así que el máximo
 total de memoria ocupada por postgres, sería shared_buffers +
 effective_cache_size
 
-### Optimización de consultas
+### Optimización de consultas <a name="optimización"></a>
 
 Este subcapítulo nos adentrará en la escritura y optimización de
 consultas. PostgreSQL posee una serie de herramientas que permiten
@@ -3529,7 +3539,7 @@ consulta se calcula teniendo en cuenta las IOPs y los ciclos de CPU.
 
 Info en <https://blog.crunchydata.com/blog/tentative-smarter-query-optimization-in-postgres-starts-with-pg_stat_statements>
 
-#### EXPLAIN y plan de consultas
+#### EXPLAIN y plan de consultas <a name="explain"></a>
 
 Info en: <https://arctype.com/blog/postgresql-query-plan-anatomy/>
 
@@ -3552,9 +3562,9 @@ primaria y otra columna con una generación de un hash md5 de manera
 aleatoria:
 
 ```sql
-CREATE TABLE ejemplo_explain (id INT PRIMARY KEY, nombre TEXT NOT NULL);
+CREATE TABLE ejemplo_explain (id INT PRIMARY KEY, hash TEXT NOT NULL);
 
-INSERT INTO ejemplo_explain SELECT n, md5 (random()::text) FROM generate_series (1,100000) AS foo(n);
+INSERT INTO ejemplo_explain SELECT n, md5 (random()::text) FROM generate_series (1,1000000) AS n;
 ```
 
 A continuación actualizamos las estadísticas de la tabla:
@@ -3597,19 +3607,19 @@ proporcional al aumento del tiempo de ejecución de autovacuum. Como se
 puede observar, el coste de la consulta anterior es 0, ya que sólo
 afecta a una fila, pero en el anterior ejemplo de EXPLAIN SELECT * el
 coste es de 1834. El cálculo de coste responde a una suma de productos
-sencilla, cuyos datos se obtienen de la tabla **pg_class**:
+sencilla, cuyos datos se obtienen de la tabla ```pg_class```:
 
-**(relpages ∗ seq_page cost) + (reltuples * cpu_tuple_cost)**
+```(relpages ∗ seq_page cost) + (reltuples * cpu_tuple_cost)```
 
 el cálculo del coste, por parte del planificador, es fácil tratándose de
 un escaneado secuencial, pero este cálculo se va complicando a medida
-que se introduzcan en la query predicados de evaluación, ordenamiento ,
+que se introduzcan en la query predicados de evaluación, ordenamiento,
 agrupamiento, unión o intersección.
 
 Un dato interesante que se genera en tiempo real, con el comando EXPLAIN
-es width, que es el tamaño medio de una tupla en bytes y para la
+es ```width```, que es el tamaño medio de una tupla en bytes y para la
 consulta anterior es 37 bytes. Esta información se puede obtener
-consultando la tabla **pg_stats**
+consultando la tabla ```pg_stats```
 
 Analicemos la siguiente consulta:
 
@@ -3620,7 +3630,7 @@ EXPLAIN ANALYZE SELECT * FROM ejemplo_explain WHERE id >= 10 and id < 20;
 ```bash
 QUERY PLAN
 ------------
-Index Scan using guru_pkey on guru (cost=0.29..8.51 rows=11 width=37)(actual time=0.007..0.010 rows=10 loops=1)
+Index Scan using id_pkey on ejemplo_explain (cost=0.29..8.51 rows=11 width=37)(actual time=0.007..0.010 rows=10 loops=1)
 Index Cond: ((id >= 10) AND (id < 20))
 Planning time: 0.132 ms
 Execution time: 0.028 ms
@@ -3662,7 +3672,7 @@ EXPLAIN (ANALYZE, BUFFERS, FORMAT YAML) SELECT * FROM ejemplo_explain;
 |                                       |                              |
 | Relation Name: "ejemplo_explain" +    | Shared Written Blocks: 0 +   |
 |                                       |                              |
-| Alias: "guru" +                       | Local Hit Blocks: 0 +        |
+| Alias: "ejemplo_explain" +            | Local Hit Blocks: 0 +        |
 |                                       |                              |
 | Startup Cost: 0.00 +                  | Local Read Blocks: 0 +       |
 |                                       |                              |
@@ -3695,9 +3705,9 @@ en caliente, y comparamos ambos planes de ejecución:
 |                                 |                             |
 | Parallel Aware: false +         | Shared Dirtied Blocks: 0 +  |
 |                                 |                             |
-| Relation Name: "guru" +         | Shared Written Blocks: 0 +  |
+| Relation Name: "ejemplo_explain"| Shared Written Blocks: 0 +  |
 |                                 |                             |
-| Alias: "guru" +                 | Local Hit Blocks: 0 +       |
+| Alias: "ejemplo_explain" +      | Local Hit Blocks: 0 +       |
 |                                 |                             |
 | Startup Cost: 0.00 +            | Local Read Blocks: 0 +      |
 |                                 |                             |
@@ -3723,7 +3733,7 @@ Lo primero que se puede apreciar a primera vista es la diferencia en
 tiempos de ejecución, siendo el segundo tiempo un 93% menos que el
 primero. Esto es debido a que la operación de lectura de la segunda
 consulta se ha realizado sobre la memoria RAM y no sobre disco. El
-parámetro Shared Hit Blocks, nos indica que los datos estaban en memoria
+parámetro ```Shared Hit Blocks```, nos indica que los datos estaban en memoria
 RAM.
 
 Es muy importante saber si el plan de ejecución de una query es correcto
@@ -3791,7 +3801,7 @@ QUERY PLAN
 Merge Join (cost=2079.95..9468.28 rows=489258 width=72) (actual time=8.193..26.330 rows=9999 loops=1)
 Merge Cond: (a.id = b.id)
 CTE tmp
-    -> Index Scan using guru_pkey on guru (cost=0.29..371.40 rows=9892 width=37)
+    -> Index Scan using id_pkey on ejemplo_explain (cost=0.29..371.40 rows=9892 width=37)
                                     (actual time=0.022..3.134 rows=9999 loops=1)
         Index Cond: (id < 10000)
     -> Sort (cost=854.28..879.01 rows=9892 width=36)(actual time=6.238..8.641 rows=9999 loops=1)
@@ -3813,7 +3823,7 @@ las opciones de merge join y hash join:
 ```sql
 SET enable_mergejoin TO off ;
 SET enable_hashjoin TO off ;
-EXPLAIN ANALYZE WITH tmp AS (SELECT * FROM guru WHERE id <10000)
+EXPLAIN ANALYZE WITH tmp AS (SELECT * FROM ejemplo_explain WHERE id < 10000)
                         SELECT * FROM tmp a inner join tmp b on a.id = b.id;
 ```
 
@@ -3824,7 +3834,7 @@ Nested Loop (cost=371.40..2202330.60 rows=489258 width=72)(actual time=0.029..15
 Join Filter: (a.id = b.id)
 Rows Removed by Join Filter: 99970002
 CTE tmp
-    -> Index Scan using guru_pkey on guru (cost=0.29..371.40 rows=9892 width=37)(actual time=0.022..2.651 rows=9999 loops=1)
+    -> Index Scan using id_pkey on ejemplo_explain (cost=0.29..371.40 rows=9892 width=37)(actual time=0.022..2.651 rows=9999 loops=1)
         Index Cond: (id < 10000)
     -> CTE Scan on tmp a (cost=0.00..197.84 rows=9892 width=36)(actual time=0.024..1.445 rows=9999 loops=1)
     -> CTE Scan on tmp b (cost=0.00..197.84 rows=9892 width=36)(actual time=0.000..0.803 rows=9999 loops=9999)
@@ -3848,16 +3858,16 @@ baje el tiempo de ejecución de la consulta.
 Ahora pasemos la CTE anterior a SQL:
 
 ```sql
-EXPLAIN ANALYZE SELECT * FROM guru as a inner join guru b on a.id = b.id WHERE a.id < 10000;
+EXPLAIN ANALYZE SELECT * FROM ejemplo_explain as a inner join ejemplo_explain b on a.id = b.id WHERE a.id < 10000;
 ```
 
 ```bash
 QUERY PLAN
 -------------------------------
 Nested Loop (cost=0.58..7877.92 rows=9892 width=74) (actual time=0.025..44.130 rows=9999 loops=1)
-    -> Index Scan using guru_pkey on guru a (cost=0.29..371.40 rows=9892 width=37)(actual time=0.018..14.139 rows=9999 loops=1)
+    -> Index Scan using id_pkey on ejemplo_explain a (cost=0.29..371.40 rows=9892 width=37)(actual time=0.018..14.139 rows=9999 loops=1)
         Index Cond: (id < 10000)
-    -> Index Scan using guru_pkey on guru b (cost=0.29..0.76 rows=1 width=37)(actual time=0.003..0.003 rows=1 loops=9999)
+    -> Index Scan using id_pkey on ejemplo_explain b (cost=0.29..0.76 rows=1 width=37)(actual time=0.003..0.003 rows=1 loops=9999)
         Index Cond: (id = a.id)
 Planning time: 0.123 ms
 Execution time: 44.873 ms
@@ -3868,7 +3878,7 @@ Una última recomendación, si tenemos un plan de ejecución muy largo y
 complicado, sería desactivar los algoritmos como nested loop join, que
 aportan complejidades de tipo exponencial.
 
-#### Errores en la escritura de consultas
+#### Errores en la escritura de consultas <a name="errores1"></a>
 
 Hay muchas maneras de cometer errores a la hora de escribir consultas,
 muchas veces debido al desconocimiento de operadores como DISTINCT,
@@ -3915,7 +3925,10 @@ Time: 132,292 ms
 Si hacemos una consulta directamente a la table ejemplo_explain,
 tardará 50 ms menos que a la vista
 
-#### Uso erróneo de índices
+Info relacionada que es interesante:
+<https://blog.timescale.com/blog/how-we-made-distinct-queries-up-to-8000x-faster-on-postgresql/>
+
+#### Uso erróneo de índices <a name="errores2"></a>
 
 El planificador va a generar un escaneado secuencial de una tabla si nos
 olvidamos de crear un índice o este está vinculado a la columna
@@ -3927,11 +3940,13 @@ impacta en el rendimiento el uso de índices. A esta tabla le llamaremos
 ejemplo_indice y va a tener un campo llamado explain_id que contendrá
 los ids de la tabla ejemplo_explain:
 
+```sql
 CREATE TABLE ejemplo_indice (id int, descripcion text, explain_id int
 references ejemplo_explain(id));
 INSERT INTO ejemplo_indice (id, descripcion, explain_id) SELECT n,
 md5(n::text), random()*99999+1 FROM generate_series(1,200000) AS
 foo(n);
+```
 
 A continuación escribimos una consulta que haga una JOIN entre la tabla
 ejemplo_indice y ejemplo_explain utilizando los campos id y
@@ -3994,9 +4009,10 @@ Las búsquedas por texto también se pueden beneficiar de los índices. La
 opción más extendida es hacer búsquedas en campos de tipo texto con
 ma´yusculas y minúsculas. Como ejemplo vamos a crear una función que
 genere caracteres en mayúsculas o minúsculas de manera aleatoria. Esta
-función va a utilizar las funciones *string_agg()* y *substr()*, las
-cuales podemos consultar en
-https://www.postgresql.org/docs/11/functions-string.html
+función va a utilizar las funciones ```string_agg()``` y ```substr()```, las
+cuales podemos consultar en:
+
+<https://www.postgresql.org/docs/11/functions-string.html>
 
 ```sql
 CREATE OR REPLACE FUNCTION generate_random_text (int) RETURNS TEXT AS $$
@@ -4015,7 +4031,7 @@ VACUUM ANALYZE login;
 ```
 
 Con la primera consulta creamos la tabla login, con 1000 filas de texto
-generado por la función generate_random_text() que creamos
+generado por la función ```generate_random_text()``` que creamos
 previamente. Después creamos un índice sobre el campo login_name de
 tipo text y finalmente actualizamos las estadísticas de la tabla.
 
@@ -4089,8 +4105,7 @@ Execution time: 0.083 ms
 Time: 0,830 ms**
 ```
 
-#### Uso erróneo de CTEs (Common Table
-    > Expressions)
+#### Uso erróneo de CTEs (Common Table Expressions) <a name="errores3"></a>
 
 Las CTEs permiten que podamos escribir consultas con una lógica muy
 compleja, de manera sencilla, además de optimizar el rendimiento en
@@ -4107,7 +4122,7 @@ ejemplo_cte WHERE id = 4;
 Time: 67,641 ms
 ```
 
-#### Uso de PL/pgSQL
+#### Uso de PL/pgSQL <a name="errores4"></a>
 
 El lenguaje procedural de postgres es una herramienta de cacheado
 impresionante, pero hay que saber como utilizarla ya que si lo hacemos
@@ -4150,7 +4165,7 @@ resultado va a ser siempre el mismo y esto hace que el plan de ejecución
 es el mismo para todos los posibles valores del predicado, debido al
 índice en el campo id.
 
-#### Particionado de tablas
+#### Particionado de tablas <a name="particionado"></a>
 
 El particionado de tablas, es una técnica que se utiliza para aumentar
 el rendimiento, y consiste en agrupar físicamente en disco los datos,
