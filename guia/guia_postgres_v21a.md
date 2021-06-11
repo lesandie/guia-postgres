@@ -18,44 +18,44 @@ Revisión 2021
 2.3. [Parámetros](#parametros)
 3. [Actualizaciones](#actualizaciones)
 
-[Tema 02: Estructura y almacenamiento en PostgreSQL](#Toc4684832)
+[Tema 02: Estructura y almacenamiento en PostgreSQL](#tema02)
 
-1. [Arquitectura básica](#Toc4684833)
-2. [Subsistemas PostgreSQL](#Toc4684834)
-3. [Componentes de PostgreSQL](#Toc4684835)
-3.1. [Bases de datos Template (de sistema)](#Toc4684836)
-3.2. [Bases de datos (de usuario)](#Toc4684837)
-3.3. [Roles](#Toc4684838)
-3.4. [Esquemas](#Toc4684839)
-3.5. [Tablespaces](#Toc4684840)
-3.6. [Tablas](#Toc4684841)
+1. [Arquitectura básica](#arquitectura)
+2. [Subsistemas PostgreSQL](#subsistemas)
+3. [Componentes de PostgreSQL](#componentes)
+3.1. [Bases de datos Template (de sistema)](#templates)
+3.2. [Bases de datos (de usuario)](#bds)
+3.3. [Roles](#roles)
+3.4. [Esquemas](#esquemas)
+3.5. [Tablespaces](#tablespaces)
+3.6. [Tablas](#tablas)
 
-[Tema 03: Funcionalidades en PostgreSQL](#Toc4684842)
+[Tema 03: Funcionalidades en PostgreSQL](#tema03)
 
-1. [Funciones](#Toc4684843)
-1.1. [Funciones anónimas](#Toc4684844)
-1.2. [Funciones PostgreSQL](#Toc4684845)
-2. [Procedimientos](#Toc4684843)
-3. [Constraints](#Toc4684843)
-4. [Lenguaje PL/pgSQL](#Toc4684846)
-4.1. [Variables y bloques funcionales](#Toc4684847)
-4.2. [Estructuras condicionales](#Toc4684848)
-4.3. [Estructuras iterativas](#Toc4684849)
-4.4. [Gestión de excepciones](#Toc4684850)
-4.5. [SQL Dinámico](#Toc4684851)
-5. [Triggers](#Toc4684852)
-5.1. [Creación de triggers e integración con funciones](#Toc4684853)
-6. [Indices](#Toc4684854)
-6.1. [Uso de índices](#Toc4684855)
-6.2. [Tipos de índices](#Toc4684856)
-6.3. [Estrategias de indexado](#Toc4684857)
-6.4. [Búsquedas Fuzzy y FTS] 
-7. [Vistas](#Toc4684858)
-8. [Transacciones](#Toc4684859)
-8.1. [Propiedades ACID](#Toc4684860)
-8.2. [Log de transacciones](#Toc4684861)
-8.3. [Checkpoints y Savepoints](#Toc4684862)
-8.4. [Concurrencia y niveles de aislamiento](#Toc4684863)
+1. [Funciones](#funciones)
+1.1. [Funciones anónimas](#anonimas)
+1.2. [Funciones PostgreSQL](#builtin)
+2. [Procedimientos](#procedimientos)
+3. [Constraints](#constraints)
+4. [Lenguaje PL/pgSQL](#plpgsql)
+4.1. [Variables y bloques funcionales](#bloques)
+4.2. [Estructuras condicionales](#condicionales)
+4.3. [Estructuras iterativas](#iterativas)
+4.4. [Gestión de excepciones](#excepciones)
+4.5. [SQL Dinámico](#dinamico)
+5. [Triggers](#trigers)
+5.1. [Creación de triggers e integración con funciones](#integracion)
+6. [Indices](#indices)
+6.1. [Uso de índices](#usoindices)
+6.2. [Tipos de índices](#tiposindices)
+6.3. [Estrategias de indexado](#estrategias)
+6.4. [Búsquedas Fuzzy y FTS](#fts) 
+7. [Vistas](#vistas)
+8. [Transacciones](#transacciones)
+8.1. [Propiedades ACID](#acid)
+8.2. [Log de transacciones](#wal)
+8.3. [Checkpoints y Savepoints](#checkpoint)
+8.4. [Concurrencia y niveles de aislamiento](#concurrencia)
 
 [Tema 04: Seguridad en PostgreSQL](#Toc4684864)
 
@@ -424,7 +424,7 @@ paquetes del sistema operativo y con yum upgrade ejecutaremos la
 actualización de los paquetes de software. Para Debian/Ubuntu
 utilizaremos sudo apt update y sudo apt upgrade respectivamente.
 
-## Tema 02: Estructura y almacenamiento en PostgreSQL
+## Tema 02: Estructura y almacenamiento en PostgreSQL <a name="tema02"></a>
 
 En este capítulo estudiaremos la arquitectura de PostgreSQL desde el
 punto de vista de un SGBD, revisando el paradigma Cliente-Servidor.
@@ -434,7 +434,7 @@ almacenamiento. Por último profundizaremos en los componentes más
 importantes de la estructura lógica de PostgreSQL, como plantillas,
 esquemas o *tablespaces*.
 
-### Arquitectura básica
+### Arquitectura básica <a name="arquitectura"></a>
 
 PostgreSQL utiliza un modelo cliente-servidor, donde los clientes y el
 servidor pueden estar en distintos *hosts.* La comunicación entre ambos
@@ -447,7 +447,7 @@ sobre procesos del sistema operativo:
 
 <https://es.wikipedia.org/wiki/Proceso_(inform%C3%A1tica)>
 
-### Subsistemas PostgreSQL
+### Subsistemas PostgreSQL <a name="subsistemas"></a>
 
 Siguiendo las directrices de un modelo cliente-servidor, PostgreSQL
 puede dividirse en 4 subsistemas: gestor de procesos, procesador de
@@ -483,7 +483,7 @@ los buffers de disco, o la gestión del espacio de almacenamiento. En los
 siguientes capítulos veremos como configurar y optimizar cada uno de
 estos sistemas y subsistemas.
 
-### Componentes de PostgreSQL
+### Componentes de PostgreSQL <a name="componentes"></a>
 
 Entender la lógica de la organización de los componentes de PostgreSQL
 ayuda a comprender como son las relaciones e interacciones entre los
@@ -493,7 +493,7 @@ nivel de jerarquía, como se puede apreciar en la imagen siguiente:
 
 <img src="./media/image4.png" alt="cv" width="400"/><br>
 
-#### Bases de datos Template (de sistema)
+#### Bases de datos Template (de sistema) <a name="templates"></a>
 
 Por defecto, cuando se crea una base de datos, esta es clonada de una
 base de datos *template* o de sistema, llamada template1
@@ -524,7 +524,7 @@ b)  ***template0*** es una copia de seguridad de template1 por si esta
     se corrompiese. Además template0 no contiene información sobre
     codificaciónes de caracteres.
 
-#### Bases de datos (de usuario)
+#### Bases de datos (de usuario) <a name="bds"></a>
 
 Podemos tener tantas bases de datos como queramos en una instancia de
 PostgreSQL. Los clientes sólo pueden conectarse y acceder a una sóla
@@ -558,7 +558,7 @@ Además de estos atributos, hay otros que hacen referencia al
 mantenimiento y gestión de las bases de datos, que veremos en capítulos
 posteriores.
 
-#### Roles
+#### Roles <a name="roles"></a>
 
 Los roles pertenencen a una instancia de PostgreSQL y no a una base de
 datos. Un rol poder ser un usuario o un grupo de usuarios. El concepto
@@ -622,7 +622,7 @@ ROLE se recomienda visitar:
 
 <https://www.postgresql.org/docs/current/role-attributes.html>
 
-#### Esquemas
+#### Esquemas <a name="esquemas"></a>
 
 Una base de datos PostgreSQL podría ser considerada como un contenedor
 para un esquema de bases de datos. Los esquemas se utilizan para
@@ -682,7 +682,7 @@ CREATE SCHEMA <nombre_del_esquema> AUTHORIZATION <nombre_del_rol>;
 
 podemos crear un esquema vinculado al rol que queramos.
 
-#### Tablespaces
+#### Tablespaces <a name="tablespaces"></a>
 
 Un espacio de tablas o *tablespace* es un espacio de almacenamiento para
 objetos o bases de datos. Los tablespaces son utilizados por los admins
@@ -710,7 +710,7 @@ Para más información consultar:
 
 <https://www.postgresql.org/docs/current/sql-createtablespace.html>
 
-#### Tablas
+#### Tablas <a name="tablas"></a>
 
 Como en cualquier SGBDR, las tablas son pilares básicos sobre las que se
 realizan casi todas las operaciones. En postgreSQL el comando CREATE
@@ -752,7 +752,7 @@ tablas:
 
 <https://www.postgresql.org/docs/current/static/datatype.html>
 
-## Tema 03: Objetos en PostgreSQL
+## Tema 03: Funcionalidades en PostgreSQL <a name="tema03"></a>
 
 En este capítulo estudiaremos distintos objetos que tienen una
 importancia relevante a la hora de administrar una instancia de
@@ -766,7 +766,7 @@ que estén utilizándolos. A continuación veremos la utilidad de las
 vistas y tablas temporales, después abordaremos las transacciones
 utilizando el entorno gráfico de administración pgAdmin4.
 
-### Funciones
+### Funciones <a name="funciones"></a>
 
 Las funciones en PostgreSQL son un mecanismo distintivo que ofrece
 nuevas posibilidades. Normalmente están compuestas por un bloque de
@@ -867,7 +867,7 @@ SELECT nada();
 Nos devolvería Empty e imprimiría el mensaje "esta función no hace nada"
 en el log de postgres.
 
-#### Funciones anónimas
+#### Funciones anónimas <a name="anonimas"></a>
 
 A veces simplemente necesitamos comprobar que un código o un conjunto de
 instrucciones básico funciona sin necesidad de crear una función. Para
@@ -886,7 +886,7 @@ BEGIN
 END $$;
 ```
 
-##### Funciones PostgreSQL
+##### Funciones PostgreSQL <a name="builtin"></a>
 
 PostgreSQL tiene una serie de funciones de alto nivel implementadas, las
 cuales podemos utilizar desde consultas SQL o PL/pgSQL.
@@ -929,7 +929,7 @@ de la siguiente manera:
 ```sql
 SELECT nombre, apellidos FROM personas WHERE nombre = upper('diego');
 ```
-### Procedimientos 
+### Procedimientos <a name="procedimientos"></a>
 
 La diferencia entre procedimientos almacenados y funciones es que los procedimientos permiten ejecutar transacciones pero no devuelven ningún tipo de valor, al contrario que las funciones que si devuelven un resultado pero no permiten la ejecución de transacciones en ámbito de ejecución. 
 
@@ -953,7 +953,7 @@ BEGIN
     COMMIT;
 END; $$ 
 ```
-### Restricciones (Constraints) 
+### Restricciones (Constraints) <a name="constraints"></a>
 
 PostgreSQL ofrece la posibilidad de ejecutar una función automáticamente cuando se produce un evento relacionado con una operación DML como una INSERT, UPDATE, DELETE o TRUNCATE en alguna tabla o vista. Esta funcionalidad la aportan los disparadores o triggers.  
 El Modelo E/R nos proporciona distintos tipos de restricciones de integridad que permiten establecer pautas de comportamiento en las Bases de Datos. Las restricciones son condiciones que deben ser ciertas en la Base de Datos y el SGBD se asegura de que éstas se cumplan.  
@@ -992,7 +992,7 @@ CREATE TABLE empleador(
 );
 ```
 
-### Lenguaje PL/pgSQL
+### Lenguaje PL/pgSQL <a name="plpgsql"></a>
 
 La posibilidad de escribir funciones en postgres es una funcionalidad
 que abre muchas puertas. Podemos realizar operaciones con los datos, sin
@@ -1037,7 +1037,7 @@ d)  Soporta cursores
 
 e)  Está integrado con el sistema de triggers de PostgreSQL
 
-#### Variables y bloques funcionales
+#### Variables y bloques funcionales <a name="bloques"></a>
 
 La sintaxis general para declarar una variable es:
 
@@ -1124,7 +1124,7 @@ apellido := 'Nieto';
 IF apellido = 'Nieto' THEN RAISE NOTICE '% no es un apellido correcto', apellido;
 ```
 
-#### Estructuras condicionales
+#### Estructuras condicionales <a name="condicionales"></a>
 
 PostgreSQL soporta las estructuras condicionales IF y CASE, que permiten
 la ejecución de bloques de código si se cumplen ciertas condiciones. La
@@ -1195,7 +1195,7 @@ podemos ver como se comporta la función si asignamos a valor NULL:
 SELECT escala_texto(null);
 ```
 
-#### Estructuras iterativas
+#### Estructuras iterativas <a name="iterativas"></a>
 
 Las iteraciones se utilizan para repetir bloques de código hasta que se
 obtenga el resultado deseado. En este tipo de estructuras se suele
@@ -1288,7 +1288,7 @@ Como se puede apreciar en el bloque de código, vemos que el bucle
 recorre todas las filas que ha devuelto la consulta, siendo 5 filas el
 resultado.
 
-#### Gestión de excepciones
+#### Gestión de excepciones <a name="excepciones"></a>
 
 Como en muchos lenguajes de alto nivel, PL/pgSQL permite la captura y
 gestión de excepciones. Una excepción se puede producir por muchas
@@ -1354,7 +1354,7 @@ check_not_null() tenemos que utilizar la palabra PERFORM, la cual nos
 permite ejecutar una función pero con una salvedad, si la función
 retorna algún valor, PERFORM lo ignorará.
 
-#### SQL Dinámico
+#### SQL Dinámico <a name="dinamico"></a>
 
 El paradigma del SQL dinámico nos permite poder ejecutar consultas de
 manera adaptativa, es decir, la ejecución dependerá de los datos que se
@@ -1424,7 +1424,7 @@ Para ejecutarla simplemente hacemos un:
 SELECT analizar_tablas('public');
 ```
 
-### Triggers
+### Triggers <a name="triggers"></a>
 
 PostgreSQL ofrece la posibilidad de ejecutar una función automáticamente
 cuando se produce un evento relacionado con una operación DML como una
@@ -1454,7 +1454,7 @@ está configurado con la opción FOR EACH STATEMENT, sólo se ejecutará por
 cada operación y si se especifica la cláusula WHEN, solamente las filas
 que cumplan la condición serán manipuladas por el trigger.
 
-#### Creación de triggers e integración con funciones
+#### Creación de triggers e integración con funciones <a name="integracion"></a>
 
 La sintaxis para crear un trigger es sencilla:
 
@@ -1507,7 +1507,7 @@ UPDATE y que después de ejecutarlas, actualice una tabla con los nuevos
 valores a modo de log o sistema de auditoría.
 
 ```sql
-CREATE TRIGGER vl_punto_trigger_after AFTER INSERT OR UPDATE ON vl_puntos
+CREATE TRIGGER vl_punto_trigger_after AFTER UPDATE OR DELETE ON vl_puntos
 FOR EACH ROW EXECUTE PROCEDURE actualizar_punto_after();
 
 CREATE OR REPLACE FUNCTION actualizar_punto_after() RETURNS TRIGGER AS $$
@@ -1518,7 +1518,7 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 ```
-Un ejemplo de trigger con la estructura TG_ARGS:
+Un ejemplo de trigger con la estructura TG_OP:
 
 ```sql
 -- TRIGGER AFTER
@@ -1542,8 +1542,7 @@ ON vl_conductor_3857 FOR EACH ROW
 WHEN (pg_trigger_depth() = 0)
 ```
 
-
-### Indices
+### Indices <a name="indices"></a>
 
 Un índice es un objeto físico de base de datos definido sobre una tabla
 o una lista de columnas. En PostgreSQL hay muchos tipos de índices cada
@@ -1558,7 +1557,7 @@ a)  Mejorar el rendimiento: un índice permite una recuperación eficiente
 b)  Validar constraints en vez de comprobarlas. Por ejemplo la
     constraint UNIQUE crea un índice con valores únicos en una columna.
 
-#### Uso de índices
+#### Uso de índices <a name="usoindices"></a>
 
 Por normal general, es el planificador el que automáticamente se encarga
 de seleccionar la operación de menor coste para recuperar un conjunto de
@@ -1569,7 +1568,7 @@ conjuntos de datos mayores (por ejemplo todas las peticiones http a un
 servidor por día, que pueden ser cientos de miles) se realizaría un
 escaneado por índice.
 
-#### Tipos de índices
+#### Tipos de índices <a name="tiposindices"></a>
 
 PostgreSQL soporta diferentes tipos de índices, cada uno orientado hacia
 un escenario o tipo de dato específicos.
@@ -1605,7 +1604,7 @@ e)  **Block range index (BRIM):** Los índices BRIM se pueden utilizer a
     de tablas muy grandes que se actualizan rara vez y la variabilidad
     de datos es casi nula.
 
-#### Estrategias de indexado
+#### Estrategias de indexado <a name="estrategias"></a>
 
 La potencia y flexibilidad de PostgreSQL hace que podamos elegir
 distintas estrategias de indexado, dependiendo de la tipología y
@@ -1631,8 +1630,8 @@ CREATE TABLE coches (id SERIAL NOT NULL, matricula TEXT, fecha_matriculacion DAT
 ```
 
 Para poder generar un conjunto de datos aleatorios, en este caso para el
-campo matricula y coordenadas utilizaremos las funciones **random()** y
-**generate_series()**
+campo matricula y coordenadas utilizaremos las funciones ```random()``` y
+```generate_series()```
 
 <https://www.postgresql.org/docs/current/functions-srf.html>
 
@@ -1656,7 +1655,7 @@ y luego generaremos una letra con
 chr(ascii('B') + (random() * 25)::integer). 
 ```
 
-Por último, con el operador **||** concatenaremos los
+Por último, con el operador ```||``` concatenaremos los
 resultados en una cadena de caracteres.
 
 A continuación la consulta al completo:
@@ -1757,7 +1756,7 @@ superan a las desventajas de no crear un índice GiST en dichos campos.
 Para nuesto caso es fácil:
 
 ```sql
-CREATE INDEX idx_coches_localización ON coches USING GIST (coordenadas);
+CREATE INDEX idx_coches_localizacion ON coches USING GIST (coordenadas);
 ```
 
 Para tener una visión general de qué estrategia de indexado nos conviene
@@ -1769,7 +1768,7 @@ las funciones **pg_indexes_size** para calcular el tamaño del índice y
 bytes a Mbytes):
 
 ```sql
-SELECT pg_size_pretty(pg_indexes_size('id_coche_pkey'));
+SELECT pg_size_pretty(pg_indexes_size('idx_coches_localizacion'));
 ```
 
 Cuando vayamos a crear un índice, es importante asegurarse de que no
@@ -1791,7 +1790,7 @@ y como liberar espacio que ocupan los índices:
 <https://hakibenita.com/postgresql-unused-index-size>
 
 
-##### Búsquedas Fuzzy y Full-Text-Search (FTS)
+##### Búsquedas Fuzzy y Full-Text-Search (FTS) <a name="fts"></a>
 Para búsquedas fuzzy (trigramas) de proximidad vamos a utilizar la extensión: 
 
 ```sql
@@ -1878,17 +1877,17 @@ CREATE INDEX idx_personas_generated_fts ON personas USING GIN (fts_col);
 Este última forma es la más rápida de todas. Más info en <https://archive.fosdem.org/2020/schedule/event/postgresql_the_state_of_full_text_search_in_postgresql_12/attachments/slides/4138/export/events/attachments/postgresql_the_state_of_full_text_search_in_postgresql_12/slides/4138/FTS.pdf>
 
 
-A veces no queda claro porqué una búsqueda no encuentra lo que queremos. en ese caso podemos utilizar la función ```code ts_debug```, que nos enseña los mecanismos internos de la búsqueda que estemos realizando:
+A veces no queda claro porqué una búsqueda no encuentra lo que queremos. en ese caso podemos utilizar la función ```ts_debug```, que nos enseña los mecanismos internos de la búsqueda que estemos realizando:
 
 ```sql
 SELECT ts_debug('spanish', 'En un lugar de la Mancha, de cuyo nombre no quiero acordarme, vivía un hidalgo');
 ```
 
-ts_debug listará cada token con info sobre el mismo, qué diccionario ha utilizado y como ha hecho el parsing
+```ts_debug``` listará cada token con info sobre el mismo, qué diccionario ha utilizado y como ha hecho el parsing
 
 Más info en: <https://www.cybertec-postgresql.com/en/postgresql-more-performance-for-like-and-ilike-statements/>
 
-### Vistas
+### Vistas <a name="vistas"></a>
 
 Las vistas son piezas esenciales de un SGBD Relacional que junto con los
 índices, tablas, constraints y triggers proporcionan marco para
@@ -1945,7 +1944,7 @@ d)  Vistas materializadas, que son tablas cuyos datos son refrescados
 Las vistas simples son especialmente útiles para "almacenar" datos
 estáticos, por ejemplo, resúmenes contables de años pasados y son especialmente útiles para cachear datos. Se utilizan mucho en entornos OLAP.
 
-### Transacciones
+### Transacciones <a name="transacciones"></a>
 
 A continuación hablaremos sobre las transacciones y su impacto en SGBDs.
 
@@ -1968,7 +1967,7 @@ durante esa transacción se revierten a su estado original. Un ejemplo
 típico de estos sistemas son las webs de reservas hoteleras, o las de
 compra de billetes de aerolíneas.
 
-#### Propiedades ACID
+#### Propiedades ACID <a name="acid"></a>
 
 Un propiedad fundamental de los SGBDs relacionales es que puedan
 garantizar en sus operaciones atomicidad, consistencia, aislamiento y
@@ -1992,7 +1991,7 @@ transacciones para recuperar el estado de una base de datos después de
 una caída o error grave. Es por ello que una base de datos debe ser
 consistente antes y después de la ejecución de una transacción.
 
-#### Log de transacciones
+#### Log de transacciones <a name="wal"></a>
 
 El propósito del Log de transacciones o *WAL (Write-Ahead Log)* es
 garantizar la consistencia en las bases de datos de una instancia
@@ -2008,7 +2007,7 @@ binarios del WAL se van borrando a medida que se van propagando los
 cambios en las bases de datos. Veremos la configuración y gestión del
 WAL con más detalle en el último tema.
 
-#### Checkpoints y Savepoints
+#### Checkpoints y Savepoints <a name="checkpoint"></a>
 
 Como podréis observar, a medida que se van propagando los cambios del
 WAL a las bases de datos, es necesario limpiar del WAL los cambios que
@@ -2032,7 +2031,7 @@ especificar un punto intermedio en la transacción sobre el cual podamos
 continuar o, en caso de que ocurriese un error, recuperar hasta ese
 punto intermedio.
 
-#### Concurrencia y niveles de aislamiento
+#### Concurrencia y niveles de aislamiento <a name="concurrencia"></a>
 
 Hemos visto que el aislamiento es una propiedad deseable en cualquier
 transacción. Acceder a un mismo dato al mismo tiempo para leer o
