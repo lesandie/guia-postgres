@@ -3801,8 +3801,7 @@ QUERY PLAN
 Merge Join (cost=2079.95..9468.28 rows=489258 width=72) (actual time=8.193..26.330 rows=9999 loops=1)
 Merge Cond: (a.id = b.id)
 CTE tmp
-    -> Index Scan using id_pkey on ejemplo_explain (cost=0.29..371.40 rows=9892 width=37)
-                                    (actual time=0.022..3.134 rows=9999 loops=1)
+    -> Index Scan using id_pkey on ejemplo_explain (cost=0.29..371.40 rows=9892 width=37)(actual time=0.022..3.134 rows=9999 loops=1)
         Index Cond: (id < 10000)
     -> Sort (cost=854.28..879.01 rows=9892 width=36)(actual time=6.238..8.641 rows=9999 loops=1)
         Sort Key: a.id
