@@ -1761,14 +1761,15 @@ CREATE INDEX idx_coches_localizacion ON coches USING GIST (coordenadas);
 
 Para tener una visión general de qué estrategia de indexado nos conviene
 más, es interesante utilizar el catálogo de sistema, donde hay varias
-tablas y vistas como **pg_stat_all_indexes** que se encargan de
+tablas y vistas como **pg_stat_all_indexes** o **pg_stat_user_indexes** que se encargan de
 facilitarnos estadísticas del uso de índices. También podemos utilizar
-las funciones **pg_indexes_size** para calcular el tamaño del índice y
-**pg_size_pretty** para formatear la unidad de medida del tamaño (de
+las funciones ```pg_indexes_size()``` para calcular el tamaño del índice y
+```pg_size_pretty()``` para formatear la unidad de medida del tamaño (de
 bytes a Mbytes):
 
 ```sql
-SELECT pg_size_pretty(pg_indexes_size('idx_coches_localizacion'));
+SELECT pg_indexes_size(oid) FROM pg_class WHERE relname = 'idx_matriculas_pares';
+SELECT pg_indexes_size(relid) FROM pg_stat_user_indexes WHERE indexrelname = 'idx_personas_generated_fts';
 ```
 
 Cuando vayamos a crear un índice, es importante asegurarse de que no
