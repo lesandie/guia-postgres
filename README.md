@@ -13,7 +13,7 @@ con distintos tipos de aplicaciones (GIS, ERPs, CRMs ...).
 En la actualidad cada vez se solicitan más perfiles técnicos con
 habilidades mixtas. Si eres un desarrollador de software o
 un administrador de sistemas y te interesa ampliar tus conocimientos
-sobre la adminitración y mantenimiento de PostgreSQL, esta es tu guía.
+sobre la administración y el mantenimiento de PostgreSQL, esta es tu guía.
 
 ## Disclaimer
 
