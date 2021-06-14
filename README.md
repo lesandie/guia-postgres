@@ -28,7 +28,7 @@ Gracias!
 
 - Instalación y configuración para distintos entornos
 
-- Lenguaje SQL y PLpg/SQL
+- Lenguaje SQL y PL/pgSQL
 
 - Creación y gestión de bases de datos
 
@@ -39,8 +39,6 @@ Gracias!
 - Monitorización y mantenimiento
 
 - Copias de seguridad y restauración
-
-- Actualizaciones
 
 
 ## Guía
