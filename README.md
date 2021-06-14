@@ -2,36 +2,29 @@
 
 <img src="./imagenes/postgresql-logo.png" alt="cv" width="300"/><br>
 
-## Presentación
+## Presentación y target
 
-Esta guía brinda la oportunidad de crear, desarrollar y gestionar bases de datos
-objeto-relacionales, planteando formas eficientes de administrar y
-monitorizar el motor de bases de datos PostgreSQL. La mayoría de
-del software actual tiene la necesidad de interactuar con bases de datos y PostgreSQL
+
+Después de mucho años administrando instancias de PostgreSQL he decidido hacer un compendio de todo lo que he aprendido y *consolidarlo* en esta guía.
+para que los que quieran adentranse en el mundo de PostgreSQL siendo
 es uno de los motores relacionales de código abierto más robustos, seguros y
 utilizados en distintos entornos (Transaccionales u OLAP) junto 
 con distintos tipos de aplicaciones (GIS, ERPs, CRMs ...).
 
 En la actualidad cada vez se solicitan más perfiles técnicos con
-habilidades mixtas como devops. Si eres un desarrollador de software o
-un administrador de sistemas, te interesará ampliar tus conocimientos
-sobre sistemas gestores de bases de datos relacionales, ya que son una parte
-fundamental de cualquier sistema IT actual.
+habilidades mixtas. Si eres un desarrollador de software o
+un administrador de sistemas y te interesa ampliar tus conocimientos
+sobre la adminitración y mantenimiento de PostgreSQL, esta es tu guía.
 
-## Target
+## Disclaimer
 
-Este guía está pensada para a una amplia audiencia con un perfil técnico: 
-que esté interesada en conocer y profundizar en el funcionamiento y
-administración de un sistema gestor de bases de datos orientado a
-objetos (ORDBMS) como PostgreSQL. Resultará especialmente útil a desarrolladores
-de software, devops o administradores de sistemas con un interés especial en
-configurar y optimizar el rendimiento de PostgreSQL. También es el
-complemento perfecto para usuarios y desarrolladores de PostGIS, ya que
-esta herramienta cartográfica está diseñada específicamente para PostgreSQL.
+Eh! que esto lo he hecho en mi tiempo libre y seguro que hay erratas y demás fallos, así que si no te importa reportarlos estaré encantado de recibir PRs para ello.
+Gracias!
+
 
 <img src="./imagenes/pgadmin.png" alt="cv" width="500"/><br>
 
-## Temas
+## Topics
 
 
 - Instalación y configuración para distintos entornos
