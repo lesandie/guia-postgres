@@ -3241,23 +3241,32 @@ el mismo que vimos en el capítulo de seguridad:
 ```bash
 # TYPE  DATABASE    USER    ADDRESS             METHOD
 # Database administrative login by Unix domain socket
-local   all             postgres                peer
+local   all             postgres                trust
 
 # "local" is for Unix domain socket connections only
-local   all             all                     md5
+local   all             all                     scram-sha-256
 
 # IPv4 local connections
-host    all             all     127.0.0.1/32    md5
-host    all             all     192.168.1.0/24  md5
+host    all             all     127.0.0.1/32    scram-sha-256
+host    all             all     192.168.1.0/24  scram-sha-256
 
 # IPv6 local connections:
-host    all             all     ::1/128         md5
+host    all             all     ::1/128         scram-sha-256
 
 # Allow replication connections from localhost, by a user with
 # replication privilege
-local   replication     all                     trust
-host    replication     all     127.0.0.1/32    trust
-host    replication     all     ::1/128         trust
+#local   replicacion     all                     trust
+host    replicacion     all     127.0.0.1/32    scram-sha-256
+host    replicacion     all     ::1/128         scram-sha-256
+```
+
+Se trata de añadir un usuario específico para replicación (tanto del wal como en modo streaming)
+
+```sql
+CREATE ROLE replicacion WITH REPLICATION LOGIN;
+postgres=# \password replicacion
+Enter new password:
+Enter it again:
 ```
 
 #### Copias base <a name="pg_basebackup"></a>
@@ -3269,7 +3278,7 @@ tiempo concreta.
 La utilidad pg_basebackup se va a encargar de hacer esta copia:
 
 ```bash
-pg_basebackup -D /mnt/backup -h localhost --checkpoint=fast --wal-method=stream
+pg_basebackup -D /mnt/backup -h localhost -P -U replicacion --checkpoint=fast --wal-method=stream
 ```
 
 Una vez hayamos ejecutado el commando, veremos que en el directorio
