@@ -5,9 +5,8 @@
 ## Presentación y target
 
 
-Después de mucho años administrando instancias de PostgreSQL he decidido hacer un compendio de todo lo que he aprendido y *consolidarlo* en esta guía.
-para que los que quieran adentranse en el mundo de PostgreSQL siendo
-es uno de los motores relacionales de código abierto más robustos, seguros y
+Después de mucho años administrando instancias de PostgreSQL he decidido hacer un compendio de todo lo que he aprendido y *consolidarlo* en esta guía. Es un buen punto de partida
+para que los que quieran adentranse en el mundo de PostgreSQL: uno de los motores relacionales de código abierto más robustos, seguros y
 utilizados en distintos entornos (Transaccionales u OLAP) junto 
 con distintos tipos de aplicaciones (GIS, ERPs, CRMs ...).
 
@@ -18,7 +17,7 @@ sobre la adminitración y mantenimiento de PostgreSQL, esta es tu guía.
 
 ## Disclaimer
 
-Eh! que esto lo he hecho en mi tiempo libre y seguro que hay erratas y demás fallos, así que si no te importa reportarlos estaré encantado de recibir PRs para ello.
+Eh! que esto lo he hecho en mi tiempo libre y seguro que hay erratas y demás fallos, así que si no te importa reportarlos estaré encantado de recibir PRs.
 Gracias!
 
 
