@@ -5,14 +5,11 @@
 ## Presentación y target
 
 
-Después de mucho años administrando instancias de PostgreSQL he decidido hacer un compendio de todo lo que he aprendido y *consolidarlo* en esta guía. Es un buen punto de partida
+Tras unos cuantos años trabajando con PostgreSQL he decidido hacer un compendio de todo lo que he aprendido y *consolidarlo* en esta guía. Es un buen punto de partida
 para que los que quieran adentranse en el mundo de PostgreSQL: uno de los motores relacionales de código abierto más robustos, seguros y
-utilizados en distintos entornos (Transaccionales u OLAP) junto 
-con distintos tipos de aplicaciones (GIS, ERPs, CRMs ...).
+utilizados en distintos entornos (Transaccionales u OLAP) junto con distintos tipos de aplicaciones (GIS, ERPs, CRMs ...).
 
-En la actualidad cada vez se solicitan más perfiles técnicos con
-habilidades mixtas. Si eres un desarrollador de software o
-un administrador de sistemas y te interesa ampliar tus conocimientos
+Si eres un desarrollador de software (full-stack, backend) o un administrador de sistemas (devops, sre, etc) y te interesa ampliar tus conocimientos
 sobre la administración y el mantenimiento de PostgreSQL, esta es tu guía.
 
 ## Disclaimer

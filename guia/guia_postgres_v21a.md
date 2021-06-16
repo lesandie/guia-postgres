@@ -1,4 +1,4 @@
-# PostgreSQL Avanzado
+# Administración básica de PostgreSQL
 
 Revisión 2021
 
@@ -3513,7 +3513,7 @@ usa operaciones de ordenado y ver si esta operación utiliza memoria o
 accede a disco:
 
 ```sql
-EXPLAIN ANALYZE SELECT n FROM generate_series(1,5) AS orden(n) ORDER BY n;
+EXPLAIN ANALYZE SELECT n FROM generate_series(1,1000) AS orden(n) ORDER BY n;
 ```
 
 ```bash
@@ -3801,8 +3801,8 @@ procedemos a ejecutar la consulta sin desactivar ninguna opción de
 planificador:
 
 ```sql
-EXPLAIN ANALYZE WITH tmp AS (SELECT * FROM ejemplo_explain WHERE id <10000)
-                        SELECT * FROM tmp a inner join tmp b on a.id = b.id;
+EXPLAIN ANALYZE WITH tmp AS (SELECT * FROM ejemplo_explain WHERE id < 10000)
+                        SELECT * FROM tmp AS a INNER JOIN tmp b ON a.id = b.id;
 ```
 
 ```bash
@@ -3826,14 +3826,37 @@ Execution time: 26.880 ms
 (15 rows)
 ```
 
-Para comprobar como se comporta un nested loop, tenemos que desactivar
-las opciones de merge join y hash join:
+Ahora veamos un *hash join*:
+
+```sql
+EXPLAIN ANALYZE WITH tmp AS (SELECT * FROM ejemplo_explain WHERE id < 10000)
+                        SELECT * FROM tmp AS a INNER JOIN ejemplo_explain b ON a.id = b.id;
+```
+```bash
+ -------------------
+ Gather  (cost=1481.81..16040.82 rows=9646 width=74) (actual time=4.026..105.148 rows=9999 loops=1)
+   Workers Planned: 2
+   Workers Launched: 2
+   ->  Hash Join  (cost=481.81..14076.22 rows=4019 width=74) (actual time=31.807..94.514 rows=3333 loops=3)
+         Hash Cond: (b.id = ejemplo_explain.id)
+         ->  Parallel Seq Scan on ejemplo_explain b  (cost=0.00..12500.67 rows=416667 width=37) (actual time=0.010..33.204 rows=333333 loops=3)
+         ->  Hash  (cost=361.23..361.23 rows=9646 width=37) (actual time=3.409..3.410 rows=9999 loops=3)
+               Buckets: 16384  Batches: 1  Memory Usage: 802kB
+               ->  Index Scan using ejemplo_explain_pkey on ejemplo_explain  (cost=0.42..361.23 rows=9646 width=37) (actual time=0.027..1.804 rows=9999 loops=3)
+                     Index Cond: (id < 10000)
+ Planning Time: 0.652 ms
+ Execution Time: 105.634 ms
+(12 rows)
+```
+
+Para comprobar como se comporta un *nested loop*, tenemos que desactivar
+las opciones de *merge join* y *hash join*:
 
 ```sql
 SET enable_mergejoin TO off ;
 SET enable_hashjoin TO off ;
 EXPLAIN ANALYZE WITH tmp AS (SELECT * FROM ejemplo_explain WHERE id < 10000)
-                        SELECT * FROM tmp a inner join tmp b on a.id = b.id;
+                        SELECT * FROM tmp AS a INNER JOIN tmp AS b on a.id = b.id;
 ```
 
 ```bash
@@ -3853,7 +3876,7 @@ Execution time: 15390.996 ms
 ```
 
 Con ambos ejemplos se puede ver la enorme diferencia entre los
-algoritmos merge join (requiere una lista ordenada) y nested loop join.
+algoritmos merge join (requiere una lista ordenada) hash join y nested loop join.
 
 PostgreSQL es inteligente; el ejemplo anterior puede ser reescrito en
 SQL sin necesidad de utilizar CTEs, pero las hemos utilizado para
@@ -3867,7 +3890,7 @@ baje el tiempo de ejecución de la consulta.
 Ahora pasemos la CTE anterior a SQL:
 
 ```sql
-EXPLAIN ANALYZE SELECT * FROM ejemplo_explain as a inner join ejemplo_explain b on a.id = b.id WHERE a.id < 10000;
+EXPLAIN ANALYZE SELECT * FROM ejemplo_explain AS a INNER JOIN ejemplo_explain AS b ON a.id = b.id WHERE a.id < 10000;
 ```
 
 ```bash
@@ -3950,11 +3973,9 @@ ejemplo_indice y va a tener un campo llamado explain_id que contendrá
 los ids de la tabla ejemplo_explain:
 
 ```sql
-CREATE TABLE ejemplo_indice (id int, descripcion text, explain_id int
-references ejemplo_explain(id));
-INSERT INTO ejemplo_indice (id, descripcion, explain_id) SELECT n,
-md5(n::text), random()*99999+1 FROM generate_series(1,200000) AS
-foo(n);
+CREATE TABLE ejemplo_indice (id INT, descripcion TEXT, explain_id INT references ejemplo_explain(id));
+INSERT INTO ejemplo_indice (id, descripcion, explain_id)
+    SELECT n, md5(n::text), random()*99999+1 FROM generate_series(1,200000) AS n;
 ```
 
 A continuación escribimos una consulta que haga una JOIN entre la tabla
@@ -3962,9 +3983,8 @@ ejemplo_indice y ejemplo_explain utilizando los campos id y
 explain_id:
 
 ```sql
-EXPLAIN ANALYZE SELECT * FROM ejemplo_explain INNER JOIN
-ejemplo_indice ON ejemplo_explain.id = ejemplo_indice.explain_id
-WHERE explain_id = 1000;
+EXPLAIN ANALYZE SELECT * FROM ejemplo_explain INNER JOIN ejemplo_indice ON 
+        ejemplo_explain.id = ejemplo_indice.explain_id WHERE explain_id = 1000;
 ```
 
 ```bash
@@ -3992,7 +4012,7 @@ CREATE INDEX ON ejemplo_indice (explain_id);
 Y volvemos a ejecutar la consulta anterior:
 
 ```sql
-EXPLAIN ANALYZE SELECT * FROM ejemplo_explain inner JOIN ejemplo_indice o ejemplo_explain.id = ejemplo_indice.explain_id
+EXPLAIN ANALYZE SELECT * FROM ejemplo_explain INNER JOIN ejemplo_indice ON ejemplo_explain.id = ejemplo_indice.explain_id
     WHERE explain_id = 1000;
 ```
 
@@ -4126,7 +4146,7 @@ de las CTEs. A continuación un ejemplo clarificador:
 SELECT * FROM ejemplo_explain WHERE id = 4;
 Time: 0,678 ms
 
-WITH ejemplo_cte as (SELECT * FROM ejemplo_explain) SELECT * FROM
+WITH ejemplo_cte AS (SELECT * FROM ejemplo_explain) SELECT * FROM
 ejemplo_cte WHERE id = 4;
 Time: 67,641 ms
 ```
@@ -4141,8 +4161,9 @@ Por ejemplo, vamos a plantear una función que ejecute una consulta como
 la siguiente:
 
 ```sql
-CREATE OR REPLACE FUNCTION function_ejemplo () RETURNS INT AS $$
-    RETURN(SELECT nombre FROM ejemplo_explain WHERE id <= 90000);
+CREATE OR REPLACE FUNCTION function_ejemplo () RETURNS INT AS 
+$$
+    RETURN(SELECT nombre FROM ejemplo_explain WHERE id <= 90000;)
 $$ LANGUAGE plpgsql;
 ```
 
