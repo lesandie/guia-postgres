@@ -3826,9 +3826,13 @@ Execution time: 26.880 ms
 (15 rows)
 ```
 
+ara comprobar como se comporta un *hash join *, tenemos que desactivar
+las opciones de *merge join* y *nested loop*:
 Ahora veamos un *hash join*:
 
 ```sql
+SET enable_mergejoin TO off
+SET enable_nestloop TO off
 EXPLAIN ANALYZE WITH tmp AS (SELECT * FROM ejemplo_explain WHERE id < 10000)
                         SELECT * FROM tmp AS a INNER JOIN ejemplo_explain b ON a.id = b.id;
 ```
