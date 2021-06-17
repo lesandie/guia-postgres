@@ -1,3 +1,4 @@
+
 # Administración básica de PostgreSQL
 
 Revisión 2021
@@ -3669,7 +3670,7 @@ echo 3 > /proc/sys/vm/drop_caches
 A continuación leamos los resultados del planificador:
 
 ```sql
-EXPLAIN (ANALYZE, BUFFERS, FORMAT YAML) SELECT * FROM ejemplo_explain;
+EXPLAIN (ANALYZE, BUFFERS, COSTS, TIMING, FORMAT YAML) SELECT * FROM ejemplo_explain;
 ```
 
 ```bash
@@ -3877,7 +3878,7 @@ CTE tmp
 Planning time: 0.117 ms
 Execution time: 15390.996 ms
 (10 rows)
-```
+cd ```
 Y pos último veamos el algoritmo **bitmap heap scan** utilizando en predicados con condiciones muy "malas" como esta:
 
 ```sql
