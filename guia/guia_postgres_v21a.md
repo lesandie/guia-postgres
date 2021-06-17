@@ -3878,9 +3878,30 @@ Planning time: 0.117 ms
 Execution time: 15390.996 ms
 (10 rows)
 ```
+Y pos último veamos el algoritmo **bitmap heap scan** utilizando en predicados con condiciones muy "malas" como esta:
 
-Con ambos ejemplos se puede ver la enorme diferencia entre los
-algoritmos merge join (requiere una lista ordenada) hash join y nested loop join.
+```sql
+EXPLAIN ANALYZE SELECT * FROM coches WHERE matricula = '3456DFR' OR matricula = '8773RED';
+```
+```bash
+                                                            QUERY PLAN
+--------------------------------------------------------------------------------------------------------------------------------
+ Bitmap Heap Scan on coches  (cost=2.22..4.44 rows=2 width=48) (actual time=0.203..0.206 rows=0 loops=1)
+   Recheck Cond: ((matricula = '3456DFR'::text) OR (matricula = '8773RED'::text))
+   ->  BitmapOr  (cost=2.22..2.22 rows=2 width=0) (actual time=0.198..0.200 rows=0 loops=1)
+         ->  Bitmap Index Scan on idx_coches_matricula  (cost=0.00..1.11 rows=1 width=0) (actual time=0.134..0.135 rows=0 loops=1)
+               Index Cond: (matricula = '3456DFR'::text)
+         ->  Bitmap Index Scan on idx_coches_matricula  (cost=0.00..1.11 rows=1 width=0) (actual time=0.060..0.061 rows=0 loops=1)
+               Index Cond: (matricula = '8773RED'::text)
+ Planning Time: 3.855 ms
+ Execution Time: 0.479 ms
+(9 rows)
+```
+Para este tipo de condición si creamos un índice de tipo hash en la columna donde está el predicado de igualdad, el planificador utilizará un **Bipmat Index scan** 
+y si no lo tiene un **Seq Scan**
+
+Con los anteriores ejemplos se puede ver la enorme diferencia entre los
+algoritmos merge join (requiere una lista ordenada) o hash join y nested loop join, el peor de todos.
 
 PostgreSQL es inteligente; el ejemplo anterior puede ser reescrito en
 SQL sin necesidad de utilizar CTEs, pero las hemos utilizado para
@@ -4167,7 +4188,7 @@ la siguiente:
 ```sql
 CREATE OR REPLACE FUNCTION function_ejemplo () RETURNS INT AS 
 $$
-    RETURN(SELECT nombre FROM ejemplo_explain WHERE id <= 90000;)
+    RETURN SELECT nombre FROM ejemplo_explain WHERE id <= 90000;
 $$ LANGUAGE plpgsql;
 ```
 
@@ -4190,7 +4211,7 @@ Si modificamos la anterior función para este caso de uso:
 
 ```sql
 CREATE OR REPLACE FUNCTION function_ejemplo () RETURNS INT AS $$
-    RETURN(SELECT nombre FROM ejemplo_explain WHERE id = 90000;)
+    RETURN(SELECT nombre FROM ejemplo_explain WHERE id = 90000);
 $$ LANGUAGE plpgsql;
 ```
 
