@@ -2711,6 +2711,16 @@ SELECT * FROM personas;
 ```
 nunca finalizará y hay que eliminarla con ```CTRL-C``` o  desde pgAdmin eliminando el proceso. Si ahora hacemos un ```ROLLBACK``` detendríamos el proceso de ```ALTER``` en la tabla *personas*.
 
+Podemos utilizar ```LOCK``` para obtener un acceso exclusivo a un recurso de manera explícita:
+
+```sql
+BEGIN;
+LOCK TABLE personas;
+```
+
+Mas info sobre los tipos de locks:
+<https://www.postgresql.org/docs/current/explicit-locking.html>
+
 Y por último vamos a hablar de limpieza y mantenimiento automatizado, más conocido como en PostgreSQL como ***VACUUM***
 
 PostgreSQL como cualquier otro SGBD, requiere que ciertas tareas se
