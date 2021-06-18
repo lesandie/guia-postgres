@@ -2681,12 +2681,39 @@ Un ejemplo:
 |-------------------|-------------------|
 | BEGIN; <br> SELECT pg_advisory_lock(15); <br> UPDATE empleados SET id = 5 WHERE nombre = 'Diego'; <br> SELECT nombre FROM empleados; COMMIT; <br> SELECT pg_advisory_unlock(15);<br> |  BEGIN;<br> SELECT nombre FROM empleados;<br> SELECT pg_advisory_lock(15);<br> It has to wait;<br> Lock 15 is taken |
 
-Como hemos dicho antes, la vista pg_locks también incluye datos sobre
+Como hemos dicho antes, la vista ```pg_locks``` también incluye datos sobre
 los advisory locks, la cual es interesante consultar para ver el estado
-de todos los locks del sistema
+de todos los locks del sistema.
 
-Y por último vamos a hablar de limpieza y mantenimiento automatizado,
-más conocido como en PostgreSQL como ***VACUUM***
+Un ejemplo para que probeis:
+
+```sql
+BEGIN;
+SELECT * FROM personas;
+```
+
+La consulta anterior crea un ```AccessShareLock```. Este tipo de lock se crea normalmente debido a consultas que leen una tabla pero no la modifican. El ```AccessShareLock``` genera conflictos con el ```AccessExclusiveLock```: esto quiere decir que si una transacción bloquea una tabla con un lock, las consultas a esa tabla dejaran de funcionar. Ahora cerramos  la transacción, para deshacer el lock y vamos a intentar adquirir un ```AccessExclusiveLock``` de la tabla personas. si añadimos una columna a esta tabla el sistema la bloqueará con un AccessExclusiveLock.
+
+Con esta query podemos ver los locks que no están vinculados al sistema:
+
+```sql
+SELECT locktype, relation::regclass, mode FROM pg_locks WHERE pid != pg_backend_pid();
+```
+
+```sql
+END;
+BEGIN;
+ALTER TABLE personas ADD eddad INT;
+```
+Si volvemos a ejecutar la anterior consulta a la vista del catálogo pg_lock veremos que hay un AccessExclusiveLock en la tabla personas. si además ejecutamos una
+```sql
+SELECT * FROM personas;
+```
+nunca finalizará y hay que eliminarla con ```CTRL-C``` o  desde pgAdmin eliminando el proceso
+
+si hacemos un ```ROLLBACK``` detendríamos el proceso de ```ALTER``` en la tabla personas
+
+Y por último vamos a hablar de limpieza y mantenimiento automatizado, más conocido como en PostgreSQL como ***VACUUM***
 
 PostgreSQL como cualquier otro SGBD, requiere que ciertas tareas se
 realicen regularmente para optimizar el rendimiento de la instancia.
@@ -2695,7 +2722,7 @@ repetitivas y pueden ser fácilmente automatizadas con scripts, como por
 ejemplo las copias de seguridad o la gestión de los logs. Pero hay otras
 tareas que tienen que ser ejecutadas en la capa de PostgreSQL (recuperar
 espacio en tablas, optimizar espacio en índices, etc) y son ejecutadas
-por el proceso *VACUUM* asociado a PostgreSQL.
+por el proceso ```VACUUM``` asociado a PostgreSQL.
 
 El proceso vacuum se encarga de:
 
@@ -2732,11 +2759,11 @@ autovacuum_analyze_threshold = 50
 autovacuum_vacuum_analyze_scale_factor = 0.1
 ```
 
-Hay dos variantes del proceso, VACUUM y VACUUM FULL, este último es más
+Hay dos variantes del proceso, ```VACUUM``` y ```VACUUM FULL```, este último es más
 pesado y requiere un bloqueo de la tabla y de sus objetos dependientes
 para realizar su trabajo.
 
-En PostgreSQL, un UPDATE o DELETE **no borran o actualizan de
+En PostgreSQL, un ```UPDATE``` o ```DELETE``` **no borran o actualizan de
 inmediato** el dato de la fila en cuestión. Esta forma de trabajo es
 necesaria para permitir el trabajo con transacciones y acceso
 concurrente a datos (MVCC). El dato de la fila no debe ser borrado
@@ -2749,7 +2776,7 @@ el espacio al SO (hay algunos casos especiales en los que si) ya que es
 más costoso bloquear la tabla al completo para devolver ese espacio. En
 cambio VACUUM FULL si que devuelve el espacio.
 
-Otra de las funciones de VACUUM es la **actualización de estadísticas
+Otra de las funciones de ```VACUUM``` es la **actualización de estadísticas
 del planificador de consultas**, el cual se basa es información
 estadística de los datos de las tablas y objetos asociados para poder
 generar planes de consultas óptimos (es importante disponer de
@@ -2759,12 +2786,12 @@ actualizar dichas estadísticas para el planificador de consultas.
 
 Actualizar el **mapa de visibilidad** es otra de las funciones de
 VACUUM, mapa que mantiene un registro de las páginas en memoria que
-contienen tuplas visibles para las transacciones activas, que VACUUM se
+contienen tuplas visibles para las transacciones activas, que ```VACUUM``` se
 encarga de actualizar. Así cuando una consulta solicite el acceso a una
 gran cantidad de datos, PostgreSQL revisa primero el mapa de visibilidad
 para evitar tener que acceder al disco innecesariamente.
 
-Y la última funcionalidad de VACUUM, es la de prevenir fallos por la
+Y la última funcionalidad de ```VACUUM```, es la de prevenir fallos por la
 **reutilización de los IDs de transacciones**,ya que los IDs son finitos
 (2e32), algo poco probable en instalaciones pequeñas. Un cluster que
 haya ejecutado más de 4 billones de transacciones puede tener problemas
