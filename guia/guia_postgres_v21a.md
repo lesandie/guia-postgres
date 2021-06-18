@@ -2692,7 +2692,7 @@ BEGIN;
 SELECT * FROM personas;
 ```
 
-La consulta anterior crea un ```AccessShareLock```. Este tipo de lock se crea normalmente debido a consultas que leen una tabla pero no la modifican. El ```AccessShareLock``` genera conflictos con el ```AccessExclusiveLock```: esto quiere decir que si una transacción bloquea una tabla con un lock, las consultas a esa tabla dejaran de funcionar. Ahora cerramos  la transacción, para deshacer el lock y vamos a intentar adquirir un ```AccessExclusiveLock``` de la tabla personas. si añadimos una columna a esta tabla el sistema la bloqueará con un AccessExclusiveLock.
+La consulta anterior crea un ```AccessShareLock```. Este tipo de lock se crea normalmente debido a consultas que leen una tabla pero no la modifican. El ```AccessShareLock``` genera conflictos con el ```AccessExclusiveLock```: esto quiere decir que si una transacción bloquea una tabla con un lock, las consultas a esa tabla dejaran de funcionar. Ahora cerramos  la transacción, para deshacer el lock y vamos a intentar adquirir un ```AccessExclusiveLock``` de la tabla personas. si añadimos una columna a esta tabla el sistema la bloqueará con un ```AccessExclusiveLock```.
 
 Con esta query podemos ver los locks que no están vinculados al sistema:
 
@@ -2703,15 +2703,13 @@ SELECT locktype, relation::regclass, mode FROM pg_locks WHERE pid != pg_backend_
 ```sql
 END;
 BEGIN;
-ALTER TABLE personas ADD eddad INT;
+ALTER TABLE personas ADD edad INT;
 ```
 Si volvemos a ejecutar la anterior consulta a la vista del catálogo pg_lock veremos que hay un AccessExclusiveLock en la tabla personas. si además ejecutamos una
 ```sql
 SELECT * FROM personas;
 ```
-nunca finalizará y hay que eliminarla con ```CTRL-C``` o  desde pgAdmin eliminando el proceso
-
-si hacemos un ```ROLLBACK``` detendríamos el proceso de ```ALTER``` en la tabla personas
+nunca finalizará y hay que eliminarla con ```CTRL-C``` o  desde pgAdmin eliminando el proceso. Si ahora hacemos un ```ROLLBACK``` detendríamos el proceso de ```ALTER``` en la tabla *personas*.
 
 Y por último vamos a hablar de limpieza y mantenimiento automatizado, más conocido como en PostgreSQL como ***VACUUM***
 
