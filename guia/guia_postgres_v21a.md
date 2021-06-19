@@ -3913,15 +3913,17 @@ CTE tmp
 Planning time: 0.117 ms
 Execution time: 15390.996 ms
 (10 rows)
-cd ```
-Y pos último veamos el algoritmo **bitmap heap scan** utilizando en predicados con condiciones muy "malas" como esta:
+```
+
+Y por último veamos el algoritmo **bitmap heap scan** utilizando en predicados con condiciones muy "malas" (además de OR < o > ) como esta:
 
 ```sql
 EXPLAIN ANALYZE SELECT * FROM coches WHERE matricula = '3456DFR' OR matricula = '8773RED';
 ```
+
 ```bash
-                                                            QUERY PLAN
---------------------------------------------------------------------------------------------------------------------------------
+    QUERY PLAN
+-----------------------------------------------------------
  Bitmap Heap Scan on coches  (cost=2.22..4.44 rows=2 width=48) (actual time=0.203..0.206 rows=0 loops=1)
    Recheck Cond: ((matricula = '3456DFR'::text) OR (matricula = '8773RED'::text))
    ->  BitmapOr  (cost=2.22..2.22 rows=2 width=0) (actual time=0.198..0.200 rows=0 loops=1)
@@ -4102,7 +4104,7 @@ genere caracteres en mayúsculas o minúsculas de manera aleatoria. Esta
 función va a utilizar las funciones ```string_agg()``` y ```substr()```, las
 cuales podemos consultar en:
 
-<https://www.postgresql.org/docs/11/functions-string.html>
+<https://www.postgresql.org/docs/current/functions-string.html>
 
 ```sql
 CREATE OR REPLACE FUNCTION generate_random_text (int) RETURNS TEXT AS $$
@@ -4173,7 +4175,7 @@ Filter: (lower(login_name) = 'jxag6gjj'::text)
 ```
 
 Y por ultimo, un comportamiento muy común es usar búsquedas de texto por
-patrones, con el operador LIKE. Una forma óptima para hacerlo es
+patrones con prefijos (XX%), con el operador LIKE. Una forma óptima para hacerlo es
 utilizar la función text_pattern_ops para crear el índice, como en el
 ejemplo siguiente, que ayudará a optimizar el uso del índice para
 búsquedas por patrón:
@@ -4182,6 +4184,9 @@ búsquedas por patrón:
 CREATE INDEX on login (login_name text_pattern_ops);
 EXPLAIN ANALYZE SELECT * FROM login WHERE login_name like 'a%';
 ```
+De todas formas si vamos a utilizar búsquedas FTS o trigram, mejor ver el capítulo de Fuzzy search y FTS en el tema 3.
+
+
 
 ```bash
 QUERY PLAN
@@ -4222,9 +4227,10 @@ Por ejemplo, vamos a plantear una función que ejecute una consulta como
 la siguiente:
 
 ```sql
-CREATE OR REPLACE FUNCTION function_ejemplo () RETURNS INT AS 
-$$
-    RETURN SELECT nombre FROM ejemplo_explain WHERE id <= 90000;
+CREATE OR REPLACE FUNCTION function_ejemplo() RETURNS INT AS $$
+BEGIN
+    RETURN (SELECT max(id) FROM ejemplo_explain WHERE id <= 90000);
+END;
 $$ LANGUAGE plpgsql;
 ```
 
@@ -4238,8 +4244,12 @@ evitar el cacheado:
 
 ```sql
 CREATE OR REPLACE FUNCTION function_ejemplo () RETURNS INT AS $$
-    EXECUTE 'SELECT nombre FROM ejemplo_explain WHERE id <= 90000' INTO nombre;
-    RETURN nombre;
+DECLARE
+    id2 INT;
+BEGIN    
+    EXECUTE 'SELECT max(id) FROM ejemplo_explain WHERE id <= 90000' INTO id2;
+    RETURN id2;
+END;
 $$ LANGUAGE plpgsql;
 ```
 
@@ -4247,7 +4257,9 @@ Si modificamos la anterior función para este caso de uso:
 
 ```sql
 CREATE OR REPLACE FUNCTION function_ejemplo () RETURNS INT AS $$
-    RETURN(SELECT nombre FROM ejemplo_explain WHERE id = 90000);
+BEGIN
+    RETURN (SELECT nombre FROM ejemplo_explain WHERE id = 90000);
+END;
 $$ LANGUAGE plpgsql;
 ```
 
@@ -4356,8 +4368,8 @@ Ahora podemos insertar algunos valores:
 ```sql
 INSERT INTO t_data_2017 (fecha, carga) VALUES ('2017-05-04', 'alimentaria 1235');
 INSERT INTO t_data_2017 (fecha, carga) VALUES ('2017-06-04', 'herramientas 73774');
-INSERT INTO t_data_2018 (fecha, carga, tipo_carga) VALUES ('2017-07-04', 'herramientas 54993', 'contenedor3');
-INSERT INTO t_data_2018 (fecha, carga, tipo_carga) VALUES ('2017-08-04', 'alimentaria 34421', 'caja332');
+INSERT INTO t_data_2018 (fecha, carga, tipo_carga) VALUES ('2018-07-04', 'herramientas 54993', 'contenedor3');
+INSERT INTO t_data_2018 (fecha, carga, tipo_carga) VALUES ('2018-08-04', 'alimentaria 34421', 'caja332');
 ```
 
 Si consultamos la tabla padre, esto nos permitirá acceder fácil y
@@ -4388,10 +4400,10 @@ y 2018. Para ello vamos a crear unas restricciones de tipo check:
 
 ```sql
 ALTER TABLE t_data_2017
-    ADD CHECK (fecha >= '2017-01-01' AND fecha < '2018-01-01');
+    ADD CHECK (fecha >= '2017-01-01' AND fecha < '2017-12-31');
 
 ALTER TABLE t_data_2017
-    ADD CHECK (fecha >= '2018-01-01' AND fecha < '2019-01-01');
+    ADD CHECK (fecha >= '2018-01-01' AND fecha < '2018-12-31');
 ```
 
 Mediante esta técnica podemos particionar, no sólo físicamente sino
