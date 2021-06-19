@@ -2674,8 +2674,8 @@ trabaja con números enteros en vez de filas o tablas.
 
 Las funciones pg_advisory_lock() y pg_advisory_unlock() se encargan
 de bloquear y desbloquear los recursos, además la función
-pg_advisory_unlock_all() desbloquea todos los recursos. 
-Un ejemplo:
+pg_advisory_unlock_all() desbloquea todos los recursos. Un ejemplo:
+
 
 | **Transacción 1** | **Transacción 2** |
 |-------------------|-------------------|
@@ -2688,11 +2688,11 @@ de todos los locks del sistema.
 Un ejemplo para que probeis:
 
 ```sql
-BEGIN;
+BEGIN
 SELECT * FROM personas;
 ```
 
-La consulta anterior crea un ```AccessShareLock```. Este tipo de lock se crea normalmente debido a consultas que leen una tabla pero no la modifican. El ```AccessShareLock``` genera conflictos con el ```AccessExclusiveLock```: esto quiere decir que si una transacción bloquea una tabla con un lock, las consultas a esa tabla dejaran de funcionar. Ahora cerramos  la transacción, para deshacer el lock y vamos a intentar adquirir un ```AccessExclusiveLock``` de la tabla personas. si añadimos una columna a esta tabla el sistema la bloqueará con un ```AccessExclusiveLock```.
+La consulta anterior crea un ```AccessShareLock```. Este tipo de lock se crea normalmente debido a consultas que leen una tabla pero no la modifican. El ```AccessShareLock``` genera conflictos con el ```AccessExclusiveLock```. Esto quiere decir que si una transacción bloquea una tabla con un lock, las consultas a esa tabla dejaran de funcionar. Ahora cerramos  la transacción, para deshacer el lock y vamos a intentar adquirir un ```AccessExclusiveLock``` de la tabla personas. Si añadimos una columna a esta tabla el sistema la bloqueará con un ```AccessExclusiveLock```.
 
 Con esta query podemos ver los locks que no están vinculados al sistema:
 
@@ -2702,13 +2702,16 @@ SELECT locktype, relation::regclass, mode FROM pg_locks WHERE pid != pg_backend_
 
 ```sql
 END;
-BEGIN;
+BEGIN
 ALTER TABLE personas ADD edad INT;
 ```
+
 Si volvemos a ejecutar la anterior consulta a la vista del catálogo pg_lock veremos que hay un AccessExclusiveLock en la tabla personas. si además ejecutamos una
+
 ```sql
 SELECT * FROM personas;
 ```
+
 nunca finalizará y hay que eliminarla con ```CTRL-C``` o  desde pgAdmin eliminando el proceso. Si ahora hacemos un ```ROLLBACK``` detendríamos el proceso de ```ALTER``` en la tabla *personas*.
 
 Podemos utilizar ```LOCK``` para obtener un acceso exclusivo a un recurso de manera explícita:
@@ -2853,6 +2856,7 @@ Cada objeto del la instancia tiene un OID (Object IDentifier) y ese OID
 se utiliza como clave primaria en las distintas tablas y vistas en
 *pg_catalog.* Además los OIDs tienen distintos tipos, como *regclass*
 para tipos de datos o *regprocedure* para tipos de funciones:
+
 | ejemplo 1 | ejemplo 2 |
 | --------- | --------- |
 | SELECT 'pg_catalog.pg_class'::regclass::oid;<br> oid <br> ------- <br> 1259 (1 row) | SELECT 1259::regclass::text; <br> text <br> ------ <br> pg_class (1 row) |
@@ -2903,7 +2907,7 @@ el anterior link.
 
 A veces nos interesa trabajar sólo a nivel de base de datos y saber que
 roles están activos para una base de datos en concreto, así que
-podríamos consultarlos mediante la vista *enabled_roles.* Para la parte
+podríamos consultarlos mediante la vista *enabled_roles* Para la parte
 de optimización, que veremos en el siguiente módulo, es interesante
 saber las estadísticas del uso de un índice, por ejemplo. La vista
 *key_column_usage*, nos proporciona información interesante del uso de
@@ -3862,7 +3866,7 @@ Execution time: 26.880 ms
 (15 rows)
 ```
 
-ara comprobar como se comporta un *hash join *, tenemos que desactivar
+Para comprobar como se comporta un *hash join*, tenemos que desactivar
 las opciones de *merge join* y *nested loop*:
 Ahora veamos un *hash join*:
 
@@ -3935,6 +3939,7 @@ EXPLAIN ANALYZE SELECT * FROM coches WHERE matricula = '3456DFR' OR matricula = 
  Execution Time: 0.479 ms
 (9 rows)
 ```
+
 Para este tipo de condición si creamos un índice de tipo hash en la columna donde está el predicado de igualdad, el planificador utilizará un **Bipmat Index scan** 
 y si no lo tiene un **Seq Scan**
 
